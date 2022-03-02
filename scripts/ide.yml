@@ -1,0 +1,20 @@
+version: "3"
+
+tasks:
+  start:
+    desc: Starts projector IDE
+    cmds:
+      - tmux new -s "android_studio@pita" -d 'unset PYTHONNOUSERSITE; while true; do projector run Android_Studio; done'
+  stop:
+    desc: Stops projector IDE
+    cmds:
+      - tmux kill-session -t "android_studio@pita"
+  enter:
+    desc: Access tmux session
+    cmds:
+      - tmux at -t "android_studio@pita"
+  restart:
+    desc: Restart IDE
+    cmds:
+      - task: stop
+      - task: start

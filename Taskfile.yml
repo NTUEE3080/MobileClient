@@ -1,0 +1,39 @@
+version: "3"
+
+includes:
+  ide: ./scripts/ide.yml
+
+tasks:
+  dev:
+    desc: Start live-development
+    cmds:
+      - |
+        flutter run --host-vmservice-port=41234 --dds-port=37555 \
+        --dart-define=AUTH_DOMAIN="pitapairing.au.auth0.com" \
+        --dart-define=AUTH_CLIENT_ID="bnWYFCnQ5AgzcAbtNX8AnCmbhZVJoEkT" \
+        --dart-define=COURSECUPID_APP_NAME="CourseCupid - DEV" \
+        --dart-define=COURSECUPID_APP_SUFFIX=".dev" \
+        --dart-define=API_DOMAIN="core.ee3080.cyanprint.dev" \
+
+
+  update:
+    desc: Update packages
+    cmds:
+      - flutter pub get
+
+  install:
+    desc: Install dependencies
+    deps:
+      - config:scripts
+    cmds:
+      - ./scripts/install.sh {{.CLI_ARGS}}
+
+  config:scripts:
+    desc: Make scripts executable
+    cmds:
+      - chmod +x -R ./scripts/
+  config:remote:
+    desc: Configure ADB devices
+    cmds:
+      - adb kill-server
+      - adb devices
