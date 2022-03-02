@@ -4,7 +4,8 @@ import "counter.dart";
 import 'multiplier.dart';
 
 class HomeWidget extends StatelessWidget {
-  const HomeWidget({Key? key, required this.title, required this.logout}) : super(key: key);
+  const HomeWidget({Key? key, required this.title, required this.logout})
+      : super(key: key);
   final String title;
   final VoidCallback logout;
 
@@ -13,7 +14,12 @@ class HomeWidget extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           actions: [
-            IconButton(onPressed: logout, icon: const Icon(Icons.logout, semanticLabel: "logout",))
+            IconButton(
+                onPressed: logout,
+                icon: const Icon(
+                  Icons.logout,
+                  semanticLabel: "logout",
+                ))
           ],
           title: Text(title),
         ),
@@ -38,8 +44,8 @@ class HomeWidget extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => const Multiplier(
-                      title: 'Multiplier',
-                    )),
+                          title: 'Multiplier',
+                        )),
               ),
               text: "Multiplier",
               subtitle: "Scale up and down numbers",

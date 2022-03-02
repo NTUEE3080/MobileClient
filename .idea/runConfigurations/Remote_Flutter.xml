@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Remote Flutter" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="additionalArgs" value="--host-vmservice-port=41234 --dds-port=37555 '--dart-define=COURSECUPID_APP_NAME=CourseCupid - DEV' '--dart-define=AUTH_DOMAIN=pitapairing.au.auth0.com' '--dart-define=AUTH_CLIENT_ID=bnWYFCnQ5AgzcAbtNX8AnCmbhZVJoEkT' '--dart-define=COURSECUPID_APP_SUFFIX=.dev' '--dart-define=COURSECUPID_APP_SUFFIX=.dev' '--dart-define=API_DOMAIN=core.ee3080.cyanprint.dev'" />
+    <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
+    <method v="2" />
+  </configuration>
+</component>

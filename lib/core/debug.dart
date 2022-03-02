@@ -3,6 +3,7 @@ import 'package:coursecupid/core/app_config.dart';
 import 'package:flutter/material.dart';
 
 class DebugWidget extends StatelessWidget {
+
   final AppConfiguration config;
 
   const DebugWidget({Key? key, required this.config}) : super(key: key);
