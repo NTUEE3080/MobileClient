@@ -13,7 +13,7 @@ class CourseCupidApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AuthFrame(child: (login, logout, error) =>
-    HomeWidget(title: "Sample Home", logout: logout,)
+    HomeWidget(title: "Weimin Home", logout: logout,)
     );
   }
 
