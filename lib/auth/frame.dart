@@ -82,7 +82,7 @@ class _AuthFrameState extends State<AuthFrame> {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Course Cupid',
-        home: user.loggedIn && user.emailVerified && user.emailFromNTU
+        home:  true //user.loggedIn && user.emailVerified && user.emailFromNTU
             ? child(login, logout, errorMessage)
             : InitialPage(
                 refresh: initAction,
