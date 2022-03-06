@@ -9,8 +9,7 @@
 .buildlog/
 .history
 .svn/
-.idea/**/*.*
-!.idea/runConfigurations/*
+.idea/
 # IntelliJ related
 *.iml
 *.ipr

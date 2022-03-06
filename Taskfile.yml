@@ -15,7 +15,11 @@ tasks:
         --dart-define=COURSECUPID_APP_SUFFIX=".dev" \
         --dart-define=API_DOMAIN="core.ee3080.cyanprint.dev" \
 
-
+  setup:
+    desc: Setup RunConfigurations
+    cmds:
+      - mkdir -p ./.idea/runConfigurations/
+      - cp -R ./runConfigurations/ ./.idea/
   update:
     desc: Update packages
     cmds:
