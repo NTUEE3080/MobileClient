@@ -1,6 +1,5 @@
 import 'package:coursecupid/core/blank.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
@@ -41,7 +40,7 @@ class AnimationPage extends StatelessWidget {
           const SizedBox(height: 20.0),
           Text(
             text,
-            style: GoogleFonts.raleway(textStyle: Theme.of(context).textTheme.headline4),
+            style: GoogleFonts.raleway(textStyle: Theme.of(context).textTheme.headline6),
           )
         ],
     );
