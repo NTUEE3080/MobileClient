@@ -1,132 +1,51 @@
+import 'package:coursecupid/core/animation.dart';
+import 'package:coursecupid/core/resp_ext.dart';
+import 'package:coursecupid/http_error.dart';
+import 'package:coursecupid/modules.dart';
+import 'package:coursecupid/swagger_generated_code/swagger.swagger.dart';
 import "package:flutter/material.dart";
-import 'Indexes.dart';
-import 'indexsearch.dart';
-//import "nav.dart";
-import 'module.dart';
+
+import 'core/api_service.dart';
+import 'core/result_ext.dart';
 
 class HomeWidget extends StatelessWidget {
-  const HomeWidget({Key? key, required this.title, required this.logout})
+  const HomeWidget(
+      {Key? key, required this.title, required this.logout, required this.api})
       : super(key: key);
   final String title;
   final VoidCallback logout;
+  final ApiService api;
+
+  Future<Result<List<ModulePrincipalRes>, HttpResponseError>>
+      getModuleList() async {
+    var current = await api.access.currentGet();
+    return await current.toResult().thenAsync((curr) async =>
+        (await api.access.moduleGet(semester: curr)).toResult());
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(
-                onPressed: logout,
-                icon: const Icon(
-                  Icons.logout,
-                  semanticLabel: "logout",
-                ))
-          ],
-          title: Text(title),
-        ),
-        body: ModuleList([
-          new Module("EE2001", "Circuit Analysis", "CA", 4, [
-
-            Index(1111,'Tut','EE01','Mon', '1030to1150',"TR+89"),
-            Index(2222,'Tut','EE02','Tue', '1030to1150',"TR+89"),
-            Index(3333,'Tut','EE03','Wed', '1030to1150',"TR+89"),
-            Index(4444,'Tut','EE04','Thurs', '1030to1150',"TR+89"),
-          ]),
-          new Module("EE2002", "Analog Electronics", "AE", 4, [
-
-            Index(1111,'Tut','EE01','Mon', '1030to1150',"TR+89"),
-            Index(2222,'Tut','EE02','Tue', '1030to1150',"TR+89"),
-            Index(3333,'Tut','EE03','Wed', '1030to1150',"TR+89"),
-            Index(4444,'Tut','EE04','Thurs', '1030to1150',"TR+89"),
-          ]),
-          new Module("EE2003", "Semiconductor Fundamentals", "Semicon", 4, [
-
-            Index(1111,'Tut','EE01','Mon', '1030to1150',"TR+89"),
-            Index(2222,'Tut','EE02','Tue', '1030to1150',"TR+89"),
-            Index(3333,'Tut','EE03','Wed', '1030to1150',"TR+89"),
-            Index(4444,'Tut','EE04','Thurs', '1030to1150',"TR+89"),
-          ]),
-          new Module("EE2007", "Engineering Mathematics II", "EM2", 4, [
-            Index(1111,'Tut','EE01','Mon', '1030to1150',"TR+89"),
-            Index(2222,'Tut','EE02','Tue', '1030to1150',"TR+89"),
-            Index(3333,'Tut','EE03','Wed', '1030to1150',"TR+89"),
-            Index(4444,'Tut','EE04','Thurs', '1030to1150',"TR+89"),
-          ]),
-    ]));
+    var errorAnimPage = const AnimationPage(
+        asset: LottieAnimations.coffee, text: "Error - Cannot list modules");
+    var loading = const AnimationPage(
+        asset: LottieAnimations.loading, text: "Loading Modules...");
+    return FutureBuilder<Result<List<ModulePrincipalRes>, HttpResponseError>>(
+        future: getModuleList(),
+        builder: (context, val) {
+          if (val.hasData) {
+            var v = val.data!;
+            if (v.isSuccess) {
+              return ModulesPage(
+                api: api,
+                logout: logout,
+                title: title,
+                moduleList: v.value,
+              );
+            } else {
+              return errorAnimPage;
+            }
+          }
+          return loading;
+        });
   }
 }
-
-class ModuleWidget extends StatelessWidget {
-  final Module module; // data/state
-
-  const ModuleWidget({Key? key, required this.module})
-      : super(key: key); // sets the state on construction
-
-  @override
-  Widget build(BuildContext context) {
-    // build method convert data into visuals
-    return GestureDetector(
-
-      // what action to perform when child is tapped
-      onTap: () {
-        // opening new page
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (ctxt) => IndexList(indexes: module.indexes)));
-      },
-      // displaying the data
-      // child: Text(module.code));
-      child: Card(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              leading: Icon(Icons.description),
-              title: Text(module.name),
-              subtitle: Text(module.description),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                TextButton(
-                  child: Text('Module Code: ${module.code}'),
-                  onPressed: () {/* ... */},
-                ),
-                const SizedBox(width: 10),
-                TextButton(
-                  child: Text('Course AU: ${module.au}'),
-                  onPressed: () {/* ... */},
-                ),
-                const SizedBox(width: 10),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class ModuleList extends StatelessWidget {
-  List<Module> modules; // data
-
-  ModuleList(this.modules, {Key? key}) : super(key: key); // setting the data
-
-  @override
-  Widget build(BuildContext context) {
-    // what to do with the data
-
-    // List<ModuleWidget> children = [];
-    // for (var m in modules) {
-    //   var w = ModuleWidget(module: m);
-    //   children.add(w);
-    // }
-
-    var children = modules.map((m) => ModuleWidget(module: m)).toList();
-    return Column(
-      children: children,
-    );
-  }
-}
-

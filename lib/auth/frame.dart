@@ -1,9 +1,8 @@
 import 'package:coursecupid/auth/initial.dart';
 import 'package:coursecupid/core/animation.dart';
-import 'package:coursecupid/core/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import '../core/api_service.dart';
+
 import 'lib/auth0.dart';
 import 'lib/user.dart';
 
@@ -19,9 +18,12 @@ Widget noOp(login, logout, message) {
 }
 
 class AuthFrame extends StatefulWidget {
+  final ThemeData theme;
+
   final Widget Function(Login login, Logout logout, String message) child;
 
-  const AuthFrame({Key? key, required this.child}) : super(key: key);
+  const AuthFrame({Key? key, required this.child, required this.theme})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AuthFrameState();
@@ -32,7 +34,7 @@ class _AuthFrameState extends State<AuthFrame> {
   bool isBusy = false;
   bool isFatal = false;
   String errorMessage = '';
-  AuthMetaUser user = AuthMetaUser(false, false, false, false, null);
+  AuthMetaUser user = AuthMetaUser(false, false, false, false, null, null);
 
   @override
   void initState() {
@@ -49,9 +51,8 @@ class _AuthFrameState extends State<AuthFrame> {
 
   updateError(String error) => setState(() => errorMessage = error);
 
-  updateUser(AuthMetaUser? r) =>
-      setState(
-              () => user = r ?? AuthMetaUser(false, false, false, false, null));
+  updateUser(AuthMetaUser? r) => setState(
+      () => user = r ?? AuthMetaUser(false, false, false, false, null, null));
 
   Future<void> initAction() async {
     try {
@@ -61,11 +62,6 @@ class _AuthFrameState extends State<AuthFrame> {
       var user = await auth.refreshSession();
       logger.i(user);
       logger.i("complete refresh session");
-      var api = await ApiService.fromPlatform();
-      var r = await api.access.userIdGet(id: "id");
-      if (!r.isSuccessful) {
-        logger.i(r.error.runtimeType);
-      }
       updateUser(user);
       setFree();
     } on Exception catch (e) {
@@ -84,7 +80,7 @@ class _AuthFrameState extends State<AuthFrame> {
             updateUser(user);
             updateError("");
           },
-          onError: (e) => updateError(e));
+          onError: (e) => updateError(e.title));
       setFree();
     } on Exception catch (e) {
       logger.e("Catch exception", e);
@@ -126,10 +122,10 @@ class _AuthFrameState extends State<AuthFrame> {
       title: 'Course Cupid',
       home: isFatal
           ? const AnimationPage(
-          asset: LottieAnimations.dogSwimming,
-          text: "Error - Doggie can't swim")
+              asset: LottieAnimations.dogSwimming,
+              text: "Error - Doggie can't swim")
           : nonError,
-      // TODO: Add a theme
+      theme: widget.theme,
     );
   }
 }

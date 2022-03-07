@@ -1,15 +1,16 @@
 // ignore_for_file: type=lint
 
-import 'package:json_annotation/json_annotation.dart';
-import 'package:collection/collection.dart';
-
-import 'package:chopper/chopper.dart';
 import 'dart:convert';
 
-import 'client_mapping.dart';
+import 'package:chopper/chopper.dart';
 import 'package:chopper/chopper.dart' as chopper;
+import 'package:collection/collection.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+import 'client_mapping.dart';
 
 part 'swagger.swagger.chopper.dart';
+
 part 'swagger.swagger.g.dart';
 
 // **************************************************************************
@@ -243,7 +244,7 @@ abstract class Swagger extends ChopperService {
       @Query('lookId') String? lookId});
 
   ///
-  Future<chopper.Response<PostResp>> postPost({required CreatePostReq? body}) {
+  Future<chopper.Response> postPost({required CreatePostReq? body}) {
     generatedMapping.putIfAbsent(PostResp, () => PostResp.fromJsonFactory);
 
     return _postPost(body: body);

@@ -5,6 +5,7 @@ import 'package:coursecupid/auth/lib/user.dart';
 import 'package:coursecupid/core/app_config.dart';
 import 'package:coursecupid/core/resp_ext.dart';
 import 'package:coursecupid/core/result_ext.dart';
+import 'package:coursecupid/http_error.dart';
 import 'package:coursecupid/swagger_generated_code/swagger.swagger.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -18,6 +19,16 @@ var logger = Logger(
   printer: PrettyPrinter(),
 );
 
+HttpResponseError egen(detail) {
+  return HttpResponseError(
+      type: "LocalException",
+      title: "Failed to Parse Token Response",
+      instance: "local/token/parse",
+      detail: detail,
+      status: 600,
+      traceId: "none");
+}
+
 bool isNtu(String s) {
   var frags = s.split("@");
   if (frags.length != 2) return false;
@@ -25,7 +36,8 @@ bool isNtu(String s) {
   return domain == "e.ntu.edu.sg";
 }
 
-var nullMetaUserFuture = Future.value(Result<AuthMetaUser?, String>.ok(null));
+var nullMetaUserFuture =
+    Future.value(Result<AuthMetaUser?, HttpResponseError>.ok(null));
 
 final FlutterAppAuth appAuth = FlutterAppAuth();
 const FlutterSecureStorage secureStorage = FlutterSecureStorage();
@@ -42,7 +54,6 @@ class Auth0 {
       return _platformAuth0!;
     }
     final config = await AppConfiguration.fromPlatform();
-    var user = AuthMetaUser(false, false, false, false, null);
     final auth0 = Auth0(config);
     _platformAuth0 = auth0;
     return auth0;
@@ -62,19 +73,21 @@ class Auth0 {
         utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))));
   }
 
-  Result<AuthTokens, String> _parseTokenResponse(TokenResponse? r) {
-    if (r == null) return Result.error("Null result from Auth endpoint");
-    if (r.idToken == null) return Result.error("No ID token obtained");
-    if (r.accessToken == null) return Result.error("No access token obtained");
+  Result<AuthTokens, HttpResponseError> _parseTokenResponse(TokenResponse? r) {
+    if (r == null) return Result.error(egen("Null result from Auth endpoint"));
+    if (r.idToken == null) return Result.error(egen("No ID token obtained"));
+    if (r.accessToken == null)
+      return Result.error(egen("No access token obtained"));
     if (r.refreshToken == null) {
-      return Result.error("No refresh token obtained");
+      return Result.error(egen("No refresh token obtained"));
     }
     final idToken = _parseIdToken(r.idToken!);
     logger.i(idToken);
     return Result.ok(AuthTokens(idToken, r.accessToken!, r.refreshToken!));
   }
 
-  Future<Result<AuthUserData?, String>> _getUserData(String token) async {
+  Future<Result<AuthUserData?, HttpResponseError>> _getUserData(
+      String token) async {
     var api = await ApiService.fromPlatform();
     var resp = await api.access.userSelfGet();
 
@@ -82,33 +95,38 @@ class Auth0 {
         .toResult()
         .mapValue((value) => value as UserPrincipalResp?)
         .thenError((error) {
-          if (error.type == "PitaPairing.Errors.NotFoundError") {
-            return Result.ok(null);
-          }
-          return Result.error(error);
-        })
-        .mapError((error) => error.title)
-        .mapValue((value) => value == null
+      if (error.type == "PitaPairing.Errors.NotFoundError") {
+        return Result.ok(null);
+      }
+      return Result.error(error);
+    }).mapValue((value) => value == null
             ? null
             : AuthUserData(value.id!, value.name!, value.email!, null));
   }
 
   Future<AuthMetaUser> logout() async {
     await secureStorage.delete(key: 'refresh_token');
-    return AuthMetaUser(false, false, false, false, null);
+    return AuthMetaUser(false, false, false, false, null, null);
   }
 
-  Future<Result<AuthMetaUser, String>> login() async {
-    return await getToken().andThenAsync((t) => _getUserData(t.accessToken)
-        .thenMap((value) => AuthMetaUser(true, isNtu(t.idToken.email),
-            t.idToken.emailVerified, value == null, value)));
+  Future<Result<AuthMetaUser, HttpResponseError>> login() async {
+    return await getToken()
+        .andThenAsync((t) => _getUserData(t.accessToken).thenMap((value) {
+              logger.i(value);
+              return AuthMetaUser(
+                  true,
+                  isNtu(t.idToken.email),
+                  t.idToken.emailVerified,
+                  value != null,
+                  UserTokenData(t.idToken.sub, t.idToken.email),
+                  value);
+            }));
   }
 
   Future<AuthMetaUser?> refreshSession() async {
     var r1 = await refreshToken();
     logger.d("r1: $r1");
     var result = await r1.thenAsync<AuthMetaUser?>((t) {
-      logger.d("t: $t");
       if (t == null) {
         return nullMetaUserFuture;
       } else {
@@ -116,7 +134,8 @@ class Auth0 {
             true,
             isNtu(t.idToken.email),
             t.idToken.emailVerified,
-            value == null,
+            value != null,
+            UserTokenData(t.idToken.sub, t.idToken.email),
             value));
       }
     });
@@ -124,7 +143,7 @@ class Auth0 {
     return result.getValueOrElse(() => null);
   }
 
-  Future<Result<String?, String>> getAccessToken() async {
+  Future<Result<String?, HttpResponseError>> getAccessToken() async {
     final storedAccessToken =
         await secureStorage.read(key: 'auth0_access_token');
     if (storedAccessToken != null) {
@@ -137,7 +156,7 @@ class Auth0 {
     return await refreshToken().thenMap((value) => value?.accessToken);
   }
 
-  Future<Result<AuthTokens?, String>> refreshToken() async {
+  Future<Result<AuthTokens?, HttpResponseError>> refreshToken() async {
     final storedRefreshToken =
         await secureStorage.read(key: 'auth0_refresh_token');
     if (storedRefreshToken == null) {
@@ -163,11 +182,17 @@ class Auth0 {
       });
     } catch (e, s) {
       logger.e('login error: $e - stack: $s');
-      return Result.error(e.toString());
+      return Result.error(HttpResponseError(
+          detail: e.toString(),
+          instance: "local/login",
+          status: 600,
+          title: "Failed To Login",
+          traceId: "none",
+          type: "LocalException"));
     }
   }
 
-  Future<Result<AuthTokens, String>> getToken() async {
+  Future<Result<AuthTokens, HttpResponseError>> getToken() async {
     try {
       final AuthorizationTokenResponse? r =
           await appAuth.authorizeAndExchangeCode(
@@ -187,7 +212,13 @@ class Auth0 {
       });
     } catch (e, s) {
       logger.e('login error: $e - stack: $s');
-      return Result.error(e.toString());
+      return Result.error(HttpResponseError(
+          detail: e.toString(),
+          instance: "local/login",
+          status: 600,
+          title: "Failed To Login",
+          traceId: "none",
+          type: "LocalException"));
     }
   }
 }

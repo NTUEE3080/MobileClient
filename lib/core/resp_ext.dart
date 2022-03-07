@@ -9,6 +9,8 @@ extension ResponseExt<T> on Response<T> {
     if (isSuccessful) {
       return Result.ok(this.body as T);
     } else {
+      logger.i(error.runtimeType);
+      logger.i(error.toString());
       if (error is String) {
         var e = error as String;
         return Result.error(HttpResponseError.fromJson(jsonDecode(e)));
@@ -16,6 +18,8 @@ extension ResponseExt<T> on Response<T> {
         var e = HttpResponseError(
             type: "UnknownError",
             title: "Client side cannot parse error response",
+            detail: "Client side cannot parse error response",
+            instance: "none",
             status: 500,
             traceId: "none");
         return Result.error(e);
