@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
 
+import 'package:flutter/material.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class Multiplier extends StatefulWidget {
@@ -50,6 +50,7 @@ class _MultiplierState extends State<Multiplier> {
 
   @override
   Widget build(BuildContext context) {
+    var keyboardIsOpen = MediaQuery.of(context).viewInsets.bottom != 0;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -80,9 +81,7 @@ class _MultiplierState extends State<Multiplier> {
                     children: [
                       ReactiveTextField(
                         decoration: const InputDecoration(
-                          filled: true,
-                          labelText: 'Base'
-                        ),
+                            filled: true, labelText: 'Base'),
                         formControlName: 'base',
                       ),
                       const SizedBox(height: 12.0),
@@ -116,10 +115,14 @@ class _MultiplierState extends State<Multiplier> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _reset,
-        tooltip: 'Reset',
-        child: const Icon(Icons.restart_alt),
+      resizeToAvoidBottomInset: false,
+      floatingActionButton: Visibility(
+        visible: !keyboardIsOpen,
+        child: FloatingActionButton(
+          onPressed: _reset,
+          tooltip: 'Reset',
+          child: const Icon(Icons.restart_alt),
+        ),
       ),
     );
   }

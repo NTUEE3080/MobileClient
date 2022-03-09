@@ -13,9 +13,16 @@ tasks:
         --dart-define=AUTH_CLIENT_ID="bnWYFCnQ5AgzcAbtNX8AnCmbhZVJoEkT" \
         --dart-define=COURSECUPID_APP_NAME="CourseCupid - DEV" \
         --dart-define=COURSECUPID_APP_SUFFIX=".dev" \
-        --dart-define=API_DOMAIN="core.ee3080.cyanprint.dev" \
+        --dart-define=API_DOMAIN="128.199.186.133" \
+        --dart-define=API_SCHEME="http" \
+        --dart-define=API_PORT="9050" \
+        --dart-define=AUTH_AUDIENCE="pitapairing.ee3080.cyanprint.dev" \
 
-
+  setup:
+    desc: Setup RunConfigurations
+    cmds:
+      - mkdir -p ./.idea/runConfigurations/
+      - cp -R ./runConfigurations/ ./.idea/
   update:
     desc: Update packages
     cmds:

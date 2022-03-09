@@ -1,8 +1,10 @@
 import 'package:coursecupid/auth/initial.dart';
+import 'package:coursecupid/core/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'lib/Auth0.dart';
-import 'lib/User.dart';
+
+import 'lib/auth0.dart';
+import 'lib/user.dart';
 
 var logger = Logger(
   printer: PrettyPrinter(),
@@ -11,24 +13,28 @@ var logger = Logger(
 typedef Logout = Future<void> Function();
 typedef Login = Future<void> Function();
 
+Widget noOp(login, logout, message) {
+  return const Center();
+}
+
 class AuthFrame extends StatefulWidget {
+  final ThemeData theme;
+
   final Widget Function(Login login, Logout logout, String message) child;
 
-  const AuthFrame({Key? key, required this.child}) : super(key: key);
+  const AuthFrame({Key? key, required this.child, required this.theme})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _AuthFrameState();
 }
 
-Widget noOp(login, logout, message) {
-  return const Center();
-}
-
 class _AuthFrameState extends State<AuthFrame> {
   Widget Function(Login login, Logout logout, String message) child = noOp;
   bool isBusy = false;
+  bool isFatal = false;
   String errorMessage = '';
-  AuthMetaUser user = AuthMetaUser(false, false, false, false, null);
+  AuthMetaUser user = AuthMetaUser(false, false, false, false, null, null);
 
   @override
   void initState() {
@@ -38,61 +44,88 @@ class _AuthFrameState extends State<AuthFrame> {
   }
 
   setBusy() => setState(() => isBusy = true);
+
   setFree() => setState(() => isBusy = false);
+
+  setFatal() => setState(() => isFatal = true);
 
   updateError(String error) => setState(() => errorMessage = error);
 
   updateUser(AuthMetaUser? r) => setState(
-      () => user = r ?? AuthMetaUser(false, false, false, false, null));
+      () => user = r ?? AuthMetaUser(false, false, false, false, null, null));
 
   Future<void> initAction() async {
-    setBusy();
-    var auth = await Auth0.fromPlatform();
-    logger.i("start refresh session");
-    var user = await auth.refreshSession();
-    logger.i(user);
-    logger.i("complete refresh session");
-    updateUser(user);
-    setFree();
+    try {
+      setBusy();
+      var auth = await Auth0.fromPlatform();
+      logger.i("start refresh session");
+      var user = await auth.refreshSession();
+      logger.i(user);
+      logger.i("complete refresh session");
+      updateUser(user);
+      setFree();
+    } on Exception catch (e) {
+      logger.e("Catch exception", e);
+      setFatal();
+    }
   }
 
   Future<void> login() async {
-    setBusy();
-    var auth = await Auth0.fromPlatform();
-    var r = await auth.login();
-    r.match(
-        onSuccess: (user) {
-          updateUser(user);
-          updateError("");
-        },
-        onError: (e) => updateError(e));
-    setFree();
+    try {
+      setBusy();
+      var auth = await Auth0.fromPlatform();
+      var r = await auth.login();
+      r.match(
+          onSuccess: (user) {
+            updateUser(user);
+            updateError("");
+          },
+          onError: (e) => updateError(e.title));
+      setFree();
+    } on Exception catch (e) {
+      logger.e("Catch exception", e);
+      setFatal();
+    }
   }
 
   Future<void> logout() async {
-    setBusy();
-    var auth = await Auth0.fromPlatform();
-    var r = await auth.logout();
-    updateUser(r);
-    updateError("");
-    setFree();
+    try {
+      setBusy();
+      var auth = await Auth0.fromPlatform();
+      var r = await auth.logout();
+      updateUser(r);
+      updateError("");
+      setFree();
+    } on Exception catch (e) {
+      logger.e("Catch exception", e);
+      setFatal();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    var registered = user.loggedIn &&
+        user.emailVerified &&
+        user.emailFromNTU &&
+        user.onboarded;
+    var nonError = registered
+        ? child(login, logout, errorMessage)
+        : InitialPage(
+      refresh: initAction,
+      user: user,
+      loginAction: login,
+      logoutAction: logout,
+      loginError: errorMessage,
+      busy: isBusy,
+    );
     return MaterialApp(
-        title: 'Course Cupid',
-        home: user.loggedIn && user.emailVerified && user.emailFromNTU
-            ? child(login, logout, errorMessage)
-            : InitialPage(
-                refresh: initAction,
-                user: user,
-                loginAction: login,
-                logoutAction: logout,
-                loginError: errorMessage,
-                busy: isBusy,
-              )
-        // TODO: Add a theme
-        );
+      title: 'Course Cupid',
+      home: isFatal
+          ? const AnimationPage(
+              asset: LottieAnimations.dogSwimming,
+              text: "Error - Doggie can't swim")
+          : nonError,
+      theme: widget.theme,
+    );
   }
 }

@@ -1,7 +1,8 @@
+import 'package:coursecupid/auth/onboard.dart';
 import 'package:coursecupid/core/animation.dart';
 import 'package:coursecupid/auth/home.dart';
-import 'package:coursecupid/auth/lib/User.dart';
-import 'package:coursecupid/auth/verifyEmail.dart';
+import 'package:coursecupid/auth/lib/user.dart';
+import 'package:coursecupid/auth/verify_email.dart';
 import 'package:flutter/material.dart';
 
 import 'error.dart';
@@ -25,12 +26,15 @@ class InitialPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    var emailPage = VerifyEmailPage(
+        refresh: refresh,
+        logout: logoutAction,
+        message: "Please verify your email");
+    var onboardPage = OnboardPage(user, refresh);
     var com = user.loggedIn
         ? (user.emailFromNTU
-            ? VerifyEmailPage(
-                refresh: refresh,
-                logout: logoutAction,
-                message: "Please verify your email")
+            ? (user.emailVerified ? onboardPage : emailPage )
             : ErrorPage(
                 logoutAction: logoutAction,
                 message: "You need to sign up with an NTU email",

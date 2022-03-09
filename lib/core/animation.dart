@@ -1,10 +1,10 @@
 import 'package:coursecupid/core/blank.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
 class LottieAnimations {
+  static const String register = "assets/register.json";
   static const String loading = "assets/loading.json";
   static const String astronaout = "assets/astronaout.json";
   static const String cat = "assets/cat.json";
@@ -20,6 +20,39 @@ class LottieAnimations {
   static const String lochness = "assets/lochness.json";
   static const String puzzle = "assets/puzzle.json";
   static const String tissue = "assets/tissue.json";
+}
+
+class AnimationFrame extends StatelessWidget {
+  final String asset;
+  final String text;
+
+  const AnimationFrame({Key? key, required this.asset, required this.text})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Lottie.asset(
+              asset,
+              width: 300,
+              height: 300,
+            ),
+            const SizedBox(height: 20.0),
+            Text(
+              text,
+              style: GoogleFonts.raleway(
+                  textStyle: Theme.of(context).textTheme.headline6),
+            )
+          ],
+        ),
+      ],
+    );
+  }
 }
 
 class AnimationPage extends StatelessWidget {
@@ -41,7 +74,7 @@ class AnimationPage extends StatelessWidget {
           const SizedBox(height: 20.0),
           Text(
             text,
-            style: GoogleFonts.raleway(textStyle: Theme.of(context).textTheme.headline4),
+            style: GoogleFonts.raleway(textStyle: Theme.of(context).textTheme.headline6),
           )
         ],
     );

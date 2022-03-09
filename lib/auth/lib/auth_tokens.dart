@@ -1,4 +1,4 @@
-import 'package:coursecupid/auth/lib/IdkToken.dart';
+import 'package:coursecupid/auth/lib/id_token.dart';
 
 class AuthTokens {
   final IdToken idToken;

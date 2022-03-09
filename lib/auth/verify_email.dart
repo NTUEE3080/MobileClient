@@ -8,6 +8,7 @@ class VerifyEmailPage extends StatelessWidget {
       required this.logout,
       required this.message})
       : super(key: key);
+
   final VoidCallback refresh;
   final VoidCallback logout;
   final String message;

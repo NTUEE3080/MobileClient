@@ -179,11 +179,17 @@ class Result<T, E> {
   /// ```
   Result<T, E2> mapError<E2>(E2 Function(E error) mapFunction) {
     if (isSuccess) {
+      return Result.ok(_value as T);
+    }
+    final newError = mapFunction(_error as E);
+    return Result.error(newError);
+  }
+
+  Result<T, E> thenError(Result<T, E> Function(E error) mapFunction) {
+    if (isSuccess) {
       return Result.ok(_value!);
     }
-
-    final newError = mapFunction(_error!);
-    return Result.error(newError);
+    return mapFunction(_error as E);
   }
 
   /// Maps from a monad from one result type to another. This is useful for
@@ -196,9 +202,9 @@ class Result<T, E> {
   /// ```
   Result<T2, E> mapValue<T2>(T2 Function(T value) mapFunction) {
     if (isFailure) {
-      return Result.error(_error!);
+      return Result.error(_error as E);
     }
-    final newValue = mapFunction(_value!);
+    final newValue = mapFunction(_value as T);
     return Result.ok(newValue);
   }
 
@@ -281,7 +287,6 @@ extension ResultExtension<T, E> on Result<T, E> {
 
   Future<Result<T2, E>> thenAsync<T2>(
       Future<Result<T2, E>> Function(T value) mapFunction) async {
-
     if (isFailure) {
       return Result.error(error);
     }
@@ -294,7 +299,7 @@ extension ResultExtension<T, E> on Result<T, E> {
   }
 
   Result<T, E> run(void Function(T value) mapFunction) {
-    if(isSuccess){
+    if (isSuccess) {
       mapFunction(value);
     }
     return this;
@@ -302,7 +307,7 @@ extension ResultExtension<T, E> on Result<T, E> {
 
   Future<Result<T, E>> runAsync(
       Future<void> Function(T value) mapFunction) async {
-    if(isSuccess){
+    if (isSuccess) {
       await mapFunction(value);
     }
     return this;
