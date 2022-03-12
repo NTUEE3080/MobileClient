@@ -36,14 +36,17 @@ class _CreateModulePost extends State<CreateModulePost> {
 
   @override
   Widget build(BuildContext context) {
+    var t = Theme.of(context);
+    var cs = t.colorScheme;
+
     var errWidget = createErr == null
         ? const SizedBox(height: 20)
         : Container(
-            padding: const EdgeInsets.all(24), child: ErrorDisplay(createErr!));
+        padding: const EdgeInsets.all(24), child: ErrorDisplay(createErr!));
     var indexChoice = _selected == null
         ? const SizedBox(height: 20)
         : CreatePostLoader(
-            module: _selected!, api: widget.api, setErr: setError);
+        module: _selected!, api: widget.api, setErr: setError);
     return Scaffold(
         appBar: AppBar(
           leading: GestureDetector(
@@ -60,13 +63,33 @@ class _CreateModulePost extends State<CreateModulePost> {
             padding: const EdgeInsets.all(12),
             child: DropdownSearch<ModulePrincipalRes>(
               dropdownSearchDecoration:
-                  const InputDecoration(labelText: 'Module'),
+              const InputDecoration(labelText: 'Module'),
+
+              popupItemBuilder: (BuildContext context, ModulePrincipalRes? p, bool selected) {
+                return ListTile(
+                  leading: const Icon(Icons.description),
+                  title: Text(
+                    p?.courseCode ?? "Unknown Course Code",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(p?.name ?? "Unknown Course Name"),
+                  trailing: Chip(
+                    label: Text(
+                      "${p?.academicUnit ?? -1} AU",
+                      style: TextStyle(color: cs.onPrimary),
+                    ),
+                    backgroundColor: cs.secondary,
+                  ),
+                );
+              },
               showSearchBox: true,
               showClearButton: true,
               mode: Mode.BOTTOM_SHEET,
               onFind: search,
               itemAsString: (ModulePrincipalRes? u) =>
-                  "${u?.courseCode}: ${u?.name}",
+              "${u?.courseCode}: ${u?.name}",
               onChanged: (ModulePrincipalRes? data) {
                 setState(() => _selected = null);
                 setState(() => _selected = data);

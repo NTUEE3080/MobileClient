@@ -1,6 +1,7 @@
 import 'package:coursecupid/core/resp_ext.dart';
 import 'package:coursecupid/my_application/index_row.dart';
 import 'package:coursecupid/post_application/post_application_load.dart';
+import 'package:coursecupid/post_creation/create_post.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
@@ -64,7 +65,11 @@ class _CreateModulePost extends State<CreateApplicationPage> {
     var f = filter ?? "";
     var offerIds = offers.map((e) => e.principal?.id ?? "non-id");
     return Future.value(widget.vm.indexes
-        .where((e) => f.lowerCompare(e.principal?.code))
+        .where((e) =>
+            f.lowerCompare(e.principal?.code) ||
+            (e.principal?.props
+                    ?.any((element) => f.lowerCompare(element.day)) ??
+                false))
         .where((e) => !offerIds.contains(e.principal?.id))
         .where((e) =>
             e.principal?.id != (widget.vm.post.post?.index?.id ?? "non-id"))
@@ -90,7 +95,8 @@ class _CreateModulePost extends State<CreateApplicationPage> {
             },
             child: const Icon(Icons.arrow_back),
           ),
-          title: Text("Apply to ${widget.vm.post.post?.module?.courseCode ?? ''} - ${widget.vm.post.post?.index?.code ?? ''}"),
+          title: Text(
+              "Apply to ${widget.vm.post.post?.module?.courseCode ?? ''} - ${widget.vm.post.post?.index?.code ?? ''}"),
         ),
         body: Column(children: [
           errWidget,
@@ -143,6 +149,7 @@ class _CreateModulePost extends State<CreateApplicationPage> {
               children: [
                 Expanded(
                   child: DropdownSearch<IndexRes>(
+                    popupItemBuilder: indexBuilder,
                     dropdownSearchDecoration:
                         const InputDecoration(labelText: 'Offers'),
                     showSearchBox: true,

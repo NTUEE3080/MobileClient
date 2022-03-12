@@ -7,6 +7,34 @@ import '../api_lib/swagger.swagger.dart';
 import '../core/animation.dart';
 import '../core/result_ext.dart';
 import '../http_error.dart';
+import '../my_application/index_row.dart';
+
+Widget indexBuilder(BuildContext context, IndexRes? p, bool selected) {
+  var t = Theme.of(context);
+  var cs = t.colorScheme;
+  return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          child: Text(
+            p?.principal?.code ?? "Unknown Index Code",
+            style: t.textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: cs.secondary,
+            ),
+          ),
+        ),
+        ...?p?.principal?.props?.map((e) => IndexRowView(prop: e)),
+        const Divider(
+          height: 12,
+          thickness: 1,
+          indent: 0,
+          endIndent: 0,
+        )
+      ]);
+}
 
 class CreatePostLoader extends StatelessWidget {
   final ModulePrincipalRes module;
@@ -77,7 +105,11 @@ class _CreatePostState extends State<CreatePost> {
   Future<List<IndexRes>> search(String? filter) {
     var f = filter ?? "";
     return Future.value(widget.indexes
-        .where((e) => f.lowerCompare(e.principal?.code))
+        .where((e) =>
+            f.lowerCompare(e.principal?.code) ||
+            (e.principal?.props
+                    ?.any((element) => f.lowerCompare(element.day)) ??
+                false))
         .toList());
   }
 
@@ -85,7 +117,11 @@ class _CreatePostState extends State<CreatePost> {
     var f = filter ?? "";
     var offerIds = offers.map((e) => e.principal?.id ?? "non-id");
     return Future.value(widget.indexes
-        .where((e) => f.lowerCompare(e.principal?.code))
+        .where((e) =>
+            f.lowerCompare(e.principal?.code) ||
+            (e.principal?.props
+                    ?.any((element) => f.lowerCompare(element.day)) ??
+                false))
         .where((e) => !offerIds.contains(e.principal?.id))
         .toList());
   }
@@ -132,26 +168,7 @@ class _CreatePostState extends State<CreatePost> {
         Container(
           padding: const EdgeInsets.all(12),
           child: DropdownSearch<IndexRes>(
-            // dropdownBuilder: (context, selectedItem) {
-            //   return ListTile(
-            //     title: Text(selectedItem?.principal?.code ?? ""),
-            //     subtitle: Column(
-            //       children: selectedItem?.principal?.props
-            //               ?.map((e) => Row(
-            //                     children: [
-            //                       Chip(label: Text(e.type!)),
-            //                       Chip(label: Text(e.day!)),
-            //                       Chip(
-            //                           label:
-            //                               Text("${e.start!} - ${e.stop!}")),
-            //                       Chip(label: Text(e.venue!)),
-            //                     ],
-            //                   ))
-            //               ?.toList() ??
-            //           [],
-            //     ),
-            //   );
-            // },
+            popupItemBuilder: indexBuilder,
             dropdownSearchDecoration:
                 const InputDecoration(labelText: 'Index You Have'),
             showSearchBox: true,
@@ -172,6 +189,7 @@ class _CreatePostState extends State<CreatePost> {
                 child: DropdownSearch<IndexRes>(
                   dropdownSearchDecoration:
                       const InputDecoration(labelText: 'Index You Want'),
+                  popupItemBuilder: indexBuilder,
                   showSearchBox: true,
                   showClearButton: true,
                   mode: Mode.BOTTOM_SHEET,
