@@ -1,4 +1,5 @@
 import 'package:coursecupid/core/resp_ext.dart';
+import 'package:coursecupid/my_application/index_row.dart';
 import 'package:coursecupid/post_application/post_application_load.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -65,17 +66,22 @@ class _CreateModulePost extends State<CreateApplicationPage> {
     return Future.value(widget.vm.indexes
         .where((e) => f.lowerCompare(e.principal?.code))
         .where((e) => !offerIds.contains(e.principal?.id))
+        .where((e) =>
+            e.principal?.id != (widget.vm.post.post?.index?.id ?? "non-id"))
         .toList());
   }
 
   @override
   Widget build(BuildContext context) {
+    var t = Theme.of(context);
+    var cs = t.colorScheme;
     var errWidget = createErr == null
         ? const SizedBox(height: 20)
         : Container(
             padding: const EdgeInsets.all(24), child: ErrorDisplay(createErr!));
     var loadAnim = const AnimationPage(
         asset: LottieAnimations.register, text: "Applying...");
+    var p = widget.vm.post.post;
     var page = Scaffold(
         appBar: AppBar(
           leading: GestureDetector(
@@ -84,11 +90,53 @@ class _CreateModulePost extends State<CreateApplicationPage> {
             },
             child: const Icon(Icons.arrow_back),
           ),
-          title: Text("Apply to ${widget.vm.post.post?.index?.code ?? ''}"),
+          title: Text("Apply to ${widget.vm.post.post?.module?.courseCode ?? ''} - ${widget.vm.post.post?.index?.code ?? ''}"),
         ),
         body: Column(children: [
-          // TODO: insert index details here
           errWidget,
+          ...?p?.index?.props?.map((e) => IndexRowView(prop: e)),
+          const Divider(
+            height: 12,
+            thickness: 1,
+            indent: 0,
+            endIndent: 0,
+          ),
+          ListTile(
+            title: Text(
+              "Looking For",
+              style: t.textTheme.overline,
+            ),
+            subtitle: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: (p?.lookingFor?.map((e) => Chip(
+                            backgroundColor: cs.primary,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(10),
+                                    bottomRight: Radius.circular(10))),
+                            label: Text(
+                              e.code ?? "Unknown Index",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: cs.onPrimary),
+                            ))) ??
+                        [])
+                    .toList(),
+              ),
+            ),
+          ),
+          const Divider(
+            height: 12,
+            thickness: 1,
+            indent: 0,
+            endIndent: 0,
+          ),
           Container(
             padding: const EdgeInsets.all(12),
             child: Row(

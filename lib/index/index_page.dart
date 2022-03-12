@@ -66,6 +66,7 @@ class _ModuleState extends State<IndexPage> {
 
   @override
   void initState() {
+    appBarTitle =Text("${widget.module.courseCode} Posts");
     fullList = widget.postList;
     filteredList = fullList;
     _controller.addListener(_searchListener);
@@ -95,7 +96,7 @@ class _ModuleState extends State<IndexPage> {
         );
       } else {
         _searchIcon = const Icon(Icons.search);
-        appBarTitle = const Text('Posts');
+        appBarTitle =Text("${widget.module.courseCode} Posts");
         filteredList = fullList;
         _controller.clear();
       }

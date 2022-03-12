@@ -1,6 +1,7 @@
 import 'package:coursecupid/auth/lib/user.dart';
 import 'package:coursecupid/index/index.dart';
 import 'package:flutter/material.dart';
+import 'package:json_theme/json_theme_schemas.dart';
 
 import '../api_lib/swagger.swagger.dart';
 import '../core/api_service.dart';
@@ -10,56 +11,67 @@ class ModuleWidget extends StatelessWidget {
   final ApiService api;
   final AuthMetaUser user;
 
-  const ModuleWidget({Key? key, required this.module, required this.api, required this.user})
+  const ModuleWidget(
+      {Key? key, required this.module, required this.api, required this.user})
       : super(key: key); // sets the state on construction
 
   @override
   Widget build(BuildContext context) {
-    // build method convert data into visuals
-    return GestureDetector(
-      // what action to perform when child is tapped
-      onTap: () {
-        // opening new page
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (ctx) => PostLoader(
-                  user: user,
-                  api: api,
-                  module: module,
-                )));
-      },
-      // displaying the data
-      // child: Text(module.code));
+    var t = Theme.of(context);
+    var cs = t.colorScheme;
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: Card(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              leading: const Icon(Icons.description),
-              title: Text(module.name!),
-              subtitle: Text(module.description!),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                TextButton(
-                  child: Text('Module Code: ${module.courseCode!}'),
-                  onPressed: () {
-                    /* ... */
-                  },
+        elevation: 2,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (ctx) => PostLoader(
+                          user: user,
+                          api: api,
+                          module: module,
+                        )));
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.description),
+                title: Text(
+                  module.courseCode!,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: cs.secondary,
+                  ),
                 ),
-                const SizedBox(width: 10),
-                TextButton(
-                  child: Text('Course AU: ${module.academicUnit!}'),
-                  onPressed: () {
-                    /* ... */
-                  },
+                subtitle: Text(module.name!),
+                trailing: Chip(
+                  label: Text(
+                    "${module.academicUnit} AU",
+                    style: TextStyle(color: cs.onPrimary),
+                  ),
+                  backgroundColor: cs.secondary,
                 ),
-                const SizedBox(width: 10),
-              ],
-            ),
-          ],
+              ),
+              const Divider(
+                height: 12,
+                thickness: 1,
+                indent: 0,
+                endIndent: 0,
+              ),
+              Container(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  module.description ?? "unknown description",
+                  style: t.textTheme.bodyLarge,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
