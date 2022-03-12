@@ -1078,6 +1078,10 @@
             "type": "string",
             "format": "uuid"
           },
+          "postId": {
+            "type": "string",
+            "format": "uuid"
+          },
           "status": {
             "type": "string",
             "nullable": true

@@ -1,16 +1,15 @@
 // ignore_for_file: type=lint
 
-import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:collection/collection.dart';
 
 import 'package:chopper/chopper.dart';
-import 'package:chopper/chopper.dart' as chopper;
-import 'package:collection/collection.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'dart:convert';
 
 import 'client_mapping.dart';
+import 'package:chopper/chopper.dart' as chopper;
 
 part 'swagger.swagger.chopper.dart';
-
 part 'swagger.swagger.g.dart';
 
 // **************************************************************************
@@ -73,6 +72,43 @@ abstract class Swagger extends ChopperService {
       @Query('accepterId') String? accepterId});
 
   ///
+  ///@param moduleId
+  ///@param indexId
+  ///@param postId
+  ///@param applierId
+  ///@param accepterId
+  Future<chopper.Response<List<ApplicationRes>>> applicationFullGet(
+      {String? moduleId,
+      String? indexId,
+      String? postId,
+      String? applierId,
+      String? accepterId}) {
+    generatedMapping.putIfAbsent(
+        ApplicationRes, () => ApplicationRes.fromJsonFactory);
+
+    return _applicationFullGet(
+        moduleId: moduleId,
+        indexId: indexId,
+        postId: postId,
+        applierId: applierId,
+        accepterId: accepterId);
+  }
+
+  ///
+  ///@param moduleId
+  ///@param indexId
+  ///@param postId
+  ///@param applierId
+  ///@param accepterId
+  @Get(path: '/Application/full')
+  Future<chopper.Response<List<ApplicationRes>>> _applicationFullGet(
+      {@Query('moduleId') String? moduleId,
+      @Query('indexId') String? indexId,
+      @Query('postId') String? postId,
+      @Query('applierId') String? applierId,
+      @Query('accepterId') String? accepterId});
+
+  ///
   ///@param id
   Future<chopper.Response<ApplicationRes>> applicationIdGet(
       {required String? id}) {
@@ -102,18 +138,15 @@ abstract class Swagger extends ChopperService {
 
   ///
   ///@param postId
-  Future<chopper.Response<ApplicationRes>> applicationPostIdPost(
+  Future<chopper.Response> applicationPostIdPost(
       {required String? postId, required CreateApplicationReq? body}) {
-    generatedMapping.putIfAbsent(
-        ApplicationRes, () => ApplicationRes.fromJsonFactory);
-
     return _applicationPostIdPost(postId: postId, body: body);
   }
 
   ///
   ///@param postId
   @Post(path: '/Application/{postId}')
-  Future<chopper.Response<ApplicationRes>> _applicationPostIdPost(
+  Future<chopper.Response> _applicationPostIdPost(
       {@Path('postId') required String? postId,
       @Body() required CreateApplicationReq? body});
 
@@ -245,15 +278,12 @@ abstract class Swagger extends ChopperService {
 
   ///
   Future<chopper.Response> postPost({required CreatePostReq? body}) {
-    generatedMapping.putIfAbsent(PostResp, () => PostResp.fromJsonFactory);
-
     return _postPost(body: body);
   }
 
   ///
   @Post(path: '/Post')
-  Future<chopper.Response<PostResp>> _postPost(
-      {@Body() required CreatePostReq? body});
+  Future<chopper.Response> _postPost({@Body() required CreatePostReq? body});
 
   ///
   ///@param id
@@ -443,6 +473,7 @@ abstract class Swagger extends ChopperService {
 class ApplicationPrincipalRes {
   ApplicationPrincipalRes({
     this.id,
+    this.postId,
     this.status,
     this.user,
     this.offers,
@@ -453,6 +484,8 @@ class ApplicationPrincipalRes {
 
   @JsonKey(name: 'id')
   final String? id;
+  @JsonKey(name: 'postId')
+  final String? postId;
   @JsonKey(name: 'status')
   final String? status;
   @JsonKey(name: 'user')
@@ -472,6 +505,8 @@ class ApplicationPrincipalRes {
         (other is ApplicationPrincipalRes &&
             (identical(other.id, id) ||
                 const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.postId, postId) ||
+                const DeepCollectionEquality().equals(other.postId, postId)) &&
             (identical(other.status, status) ||
                 const DeepCollectionEquality().equals(other.status, status)) &&
             (identical(other.user, user) ||
@@ -483,6 +518,7 @@ class ApplicationPrincipalRes {
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(postId) ^
       const DeepCollectionEquality().hash(status) ^
       const DeepCollectionEquality().hash(user) ^
       const DeepCollectionEquality().hash(offers) ^
@@ -492,11 +528,13 @@ class ApplicationPrincipalRes {
 extension $ApplicationPrincipalResExtension on ApplicationPrincipalRes {
   ApplicationPrincipalRes copyWith(
       {String? id,
+      String? postId,
       String? status,
       UserPrincipalResp? user,
       List<IndexPrincipalRes>? offers}) {
     return ApplicationPrincipalRes(
         id: id ?? this.id,
+        postId: postId ?? this.postId,
         status: status ?? this.status,
         user: user ?? this.user,
         offers: offers ?? this.offers);
@@ -1252,6 +1290,7 @@ extension $ModuleResExtension on ModuleRes {
 class PostPrincipalResp {
   PostPrincipalResp({
     this.id,
+    this.ownerId,
     this.index,
     this.module,
     this.completed,
@@ -1263,6 +1302,8 @@ class PostPrincipalResp {
 
   @JsonKey(name: 'id')
   final String? id;
+  @JsonKey(name: 'ownerId')
+  final String? ownerId;
   @JsonKey(name: 'index')
   final IndexPrincipalRes? index;
   @JsonKey(name: 'module')
@@ -1284,6 +1325,9 @@ class PostPrincipalResp {
         (other is PostPrincipalResp &&
             (identical(other.id, id) ||
                 const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.ownerId, ownerId) ||
+                const DeepCollectionEquality()
+                    .equals(other.ownerId, ownerId)) &&
             (identical(other.index, index) ||
                 const DeepCollectionEquality().equals(other.index, index)) &&
             (identical(other.module, module) ||
@@ -1299,6 +1343,7 @@ class PostPrincipalResp {
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(ownerId) ^
       const DeepCollectionEquality().hash(index) ^
       const DeepCollectionEquality().hash(module) ^
       const DeepCollectionEquality().hash(completed) ^
@@ -1309,12 +1354,14 @@ class PostPrincipalResp {
 extension $PostPrincipalRespExtension on PostPrincipalResp {
   PostPrincipalResp copyWith(
       {String? id,
+      String? ownerId,
       IndexPrincipalRes? index,
       ModulePrincipalRes? module,
       bool? completed,
       List<IndexPrincipalRes>? lookingFor}) {
     return PostPrincipalResp(
         id: id ?? this.id,
+        ownerId: ownerId ?? this.ownerId,
         index: index ?? this.index,
         module: module ?? this.module,
         completed: completed ?? this.completed,

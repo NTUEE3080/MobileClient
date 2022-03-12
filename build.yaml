@@ -2,10 +2,11 @@ targets:
   $default:
     sources:
       - lib/**
-      - swagger/**
+      - swaggers/**
       - $package$
     builders:
       swagger_dart_code_generator:
         options:
-          input_folder: "swagger/"
-          output_folder: "lib/swagger_generated_code_v2/"
+          build_only_models: true
+          input_folder: "swagger_files/"
+          output_folder: "lib/api_lib/"

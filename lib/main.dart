@@ -23,22 +23,28 @@ class CourseCupidApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const eAim = AnimationPage(
+        asset: LottieAnimations.lochness, text: "Error - Lochness Monster");
+    const lAim =
+        AnimationPage(asset: LottieAnimations.loading, text: "Loading...");
+
     return AuthFrame(
         theme: theme,
-        child: (login, logout, error) => FutureBuilder<ApiService>(
+        child: (login, logout, user, error) => FutureBuilder<ApiService>(
             future: ApiService.fromPlatform(),
             builder: (context, val) {
-              if (val.hasData) {
-                return HomeWidget(
-                  title: "Home",
-                  logout: logout,
-                  api: val.data!,
-                );
-              } else {
-                return const AnimationPage(
-                    asset: LottieAnimations.lochness,
-                    text: "Error - Lochness Monster");
+              if (val.connectionState == ConnectionState.done) {
+                if (val.hasData) {
+                  return HomeWidget(
+                    user: user,
+                    title: "Home",
+                    logout: logout,
+                    api: val.data!,
+                  );
+                }
+                return eAim;
               }
+              return lAim;
             }));
   }
 }

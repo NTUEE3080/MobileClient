@@ -10,6 +10,7 @@ ApplicationPrincipalRes _$ApplicationPrincipalResFromJson(
         Map<String, dynamic> json) =>
     ApplicationPrincipalRes(
       id: json['id'] as String?,
+      postId: json['postId'] as String?,
       status: json['status'] as String?,
       user: json['user'] == null
           ? null
@@ -25,6 +26,7 @@ Map<String, dynamic> _$ApplicationPrincipalResToJson(
         ApplicationPrincipalRes instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'postId': instance.postId,
       'status': instance.status,
       'user': instance.user?.toJson(),
       'offers': instance.offers?.map((e) => e.toJson()).toList(),
@@ -251,6 +253,7 @@ Map<String, dynamic> _$ModuleResToJson(ModuleRes instance) => <String, dynamic>{
 PostPrincipalResp _$PostPrincipalRespFromJson(Map<String, dynamic> json) =>
     PostPrincipalResp(
       id: json['id'] as String?,
+      ownerId: json['ownerId'] as String?,
       index: json['index'] == null
           ? null
           : IndexPrincipalRes.fromJson(json['index'] as Map<String, dynamic>),
@@ -268,6 +271,7 @@ PostPrincipalResp _$PostPrincipalRespFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$PostPrincipalRespToJson(PostPrincipalResp instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'ownerId': instance.ownerId,
       'index': instance.index?.toJson(),
       'module': instance.module?.toJson(),
       'completed': instance.completed,

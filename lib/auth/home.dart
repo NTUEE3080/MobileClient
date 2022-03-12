@@ -26,11 +26,14 @@ class InitialHomePage extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             shape: BeveledRectangleBorder(
                 borderRadius: BorderRadius.circular(9.0)),
-            minimumSize: const Size(200, 48),
+            minimumSize: const Size(200, 56),
             elevation: 0,
           ),
           onPressed: loginAction,
-          child: const Text("Register")),
+          child: Text(
+            "Register",
+            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+          )),
       const SizedBox(height: 30.0),
       TextButton(onPressed: loginAction, child: const Text("Login"))
     ]);

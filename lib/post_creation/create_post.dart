@@ -1,12 +1,12 @@
 import 'package:coursecupid/core/api_service.dart';
 import 'package:coursecupid/core/resp_ext.dart';
-import 'package:coursecupid/swagger_generated_code/swagger.swagger.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
-import 'core/animation.dart';
-import 'core/result_ext.dart';
-import 'http_error.dart';
+import '../api_lib/swagger.swagger.dart';
+import '../core/animation.dart';
+import '../core/result_ext.dart';
+import '../http_error.dart';
 
 class CreatePostLoader extends StatelessWidget {
   final ModulePrincipalRes module;
@@ -27,28 +27,30 @@ class CreatePostLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var errorAnimPage = const AnimationPage(
+    var errorAnimPage = const AnimationFrame(
         asset: LottieAnimations.laptop,
         text: "Error - Cannot obtain index list");
-    var loading = const AnimationPage(
+    var loading = const AnimationFrame(
         asset: LottieAnimations.loading, text: "Loading Indexes...");
     return FutureBuilder<Result<List<IndexRes>, HttpResponseError>>(
         future: getIndexList(),
         builder: (context, val) {
-          if (val.hasData) {
-            var v = val.data!;
-            if (v.isSuccess) {
-              return CreatePost(
-                indexes: v.value,
-                module: module,
-                api: api,
-                setErr: setErr,
-              );
-            } else {
-              return errorAnimPage;
+          if (val.connectionState == ConnectionState.done) {
+            if (val.hasData) {
+              var v = val.data!;
+              if (v.isSuccess) {
+                return CreatePost(
+                  indexes: v.value,
+                  module: module,
+                  api: api,
+                  setErr: setErr,
+                );
+              }
             }
+            return errorAnimPage;
+          } else {
+            return loading;
           }
-          return loading;
         });
   }
 }
@@ -73,21 +75,17 @@ class CreatePost extends StatefulWidget {
 
 class _CreatePostState extends State<CreatePost> {
   Future<List<IndexRes>> search(String? filter) {
-    var lower = filter?.toLowerCase() ?? "";
+    var f = filter ?? "";
     return Future.value(widget.indexes
-        .where((e) =>
-            e.principal!.code!.toLowerCase().contains(lower) ||
-            lower.contains(e.principal!.code!.toLowerCase()))
+        .where((e) => f.lowerCompare(e.principal?.code))
         .toList());
   }
 
   Future<List<IndexRes>> searchWithoutOffers(String? filter) {
-    var lower = filter?.toLowerCase() ?? "";
+    var f = filter ?? "";
     var offerIds = offers.map((e) => e.principal?.id ?? "non-id");
     return Future.value(widget.indexes
-        .where((e) =>
-            e.principal!.code!.toLowerCase().contains(lower) ||
-            lower.contains(e.principal!.code!.toLowerCase()))
+        .where((e) => f.lowerCompare(e.principal?.code))
         .where((e) => !offerIds.contains(e.principal?.id))
         .toList());
   }
@@ -108,7 +106,6 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   _create(context) async {
-    logger.i("called");
     if (_haveSelected == null || offers.isEmpty) return;
     busy();
     var r = await widget.api.access.postPost(
@@ -167,17 +164,6 @@ class _CreatePostState extends State<CreatePost> {
             },
           ),
         ),
-        const SizedBox(height: 80),
-        Text("Your offers", style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 28),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: offers
-              .map((x) => InkWell(
-                  onTap: () => _removeOffer(x.principal?.id ?? "non-id"),
-                  child: Chip(label: Text(x.principal?.code ?? ""))))
-              .toList(),
-        ),
         Container(
           padding: const EdgeInsets.all(12),
           child: Row(
@@ -197,40 +183,80 @@ class _CreatePostState extends State<CreatePost> {
                 ),
               ),
               const SizedBox(width: 12),
-              TextButton(
-                onPressed: () {
-                  if (_wantSelected != null &&
-                      !offers.contains(_wantSelected)) {
+              Ink(
+                decoration: ShapeDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  shape: const CircleBorder(),
+                ),
+                child: IconButton(
+                  onPressed: () {
+                    if (_wantSelected != null &&
+                        !offers.contains(_wantSelected)) {
+                      setState(() {
+                        offers = [...offers, _wantSelected!];
+                      });
+                    }
                     setState(() {
-                      offers = [...offers, _wantSelected!];
+                      _wantSelected = null;
                     });
-                  }
-                  setState(() {
-                    _wantSelected = null;
-                  });
-                },
-                child: const Icon(Icons.add),
-                style: ButtonStyle(
-                    shape: MaterialStateProperty.all(const CircleBorder())),
+                  },
+                  icon: const Icon(Icons.add),
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               )
             ],
           ),
         ),
+        Container(
+          padding: const EdgeInsets.all(24),
+          child: Wrap(
+            alignment: WrapAlignment.spaceAround,
+            spacing: 24,
+            runSpacing: 8,
+            children: offers
+                .map((x) => InkWell(
+                    onTap: () => _removeOffer(x.principal?.id ?? "non-id"),
+                    child: Chip(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        padding: const EdgeInsets.all(12),
+                        label: Text(
+                          x.principal?.code ?? "",
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary),
+                        ))))
+                .toList(),
+          ),
+        ),
+        const SizedBox(height: 40),
         ButtonBar(
+          buttonHeight: 100,
           children: [
-            TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("back")),
+            OutlinedButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("back"),
+              style: ElevatedButton.styleFrom(
+                shape: BeveledRectangleBorder(
+                    borderRadius: BorderRadius.circular(9.0)),
+                minimumSize: const Size(120, 56),
+                elevation: 0,
+              ),
+            ),
             ElevatedButton(
-                onPressed: _haveSelected != null && offers.isNotEmpty
-                    ? () => _create(context)
-                    : null,
-                child: const Text("create"))
+              onPressed: _haveSelected != null && offers.isNotEmpty
+                  ? () => _create(context)
+                  : null,
+              child: const Text("create"),
+              style: ElevatedButton.styleFrom(
+                shape: BeveledRectangleBorder(
+                    borderRadius: BorderRadius.circular(9.0)),
+                minimumSize: const Size(120, 56),
+              ),
+            ),
           ],
         )
       ],
     );
-    var loadAnim = const AnimationPage(
+    var loadAnim = const AnimationFrame(
         asset: LottieAnimations.register, text: "Creating post...");
     return loading ? loadAnim : widget;
   }

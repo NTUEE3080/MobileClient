@@ -2,10 +2,10 @@ import 'package:coursecupid/auth/lib/user.dart';
 import 'package:coursecupid/core/animation.dart';
 import 'package:coursecupid/core/resp_ext.dart';
 import 'package:coursecupid/http_error.dart';
-import 'package:coursecupid/swagger_generated_code/swagger.swagger.dart';
 import 'package:flutter/material.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
+import '../api_lib/swagger.swagger.dart';
 import '../components/error_renderer.dart';
 import '../core/api_service.dart';
 

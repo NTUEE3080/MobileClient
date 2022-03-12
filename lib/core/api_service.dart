@@ -1,7 +1,8 @@
 import 'package:chopper/chopper.dart';
 import 'package:coursecupid/core/app_config.dart';
-import 'package:coursecupid/swagger_generated_code/client_index.dart';
 import 'package:coursecupid/auth/lib/auth0.dart';
+
+import '../api_lib/swagger.swagger.dart';
 
 class ApiService {
   final AppConfiguration config;
@@ -31,7 +32,6 @@ class ApiService {
           if (r.isSuccess) {
             var v = r.value;
             if (v != null) {
-              logger.i("obtain auth code: $v");
               return applyHeader(request, 'authorization', "Bearer $v");
             }
           }

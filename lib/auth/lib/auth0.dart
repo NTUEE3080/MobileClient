@@ -6,11 +6,11 @@ import 'package:coursecupid/core/app_config.dart';
 import 'package:coursecupid/core/resp_ext.dart';
 import 'package:coursecupid/core/result_ext.dart';
 import 'package:coursecupid/http_error.dart';
-import 'package:coursecupid/swagger_generated_code/swagger.swagger.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
 
+import '../../api_lib/swagger.swagger.dart';
 import '../../core/api_service.dart';
 import 'auth_tokens.dart';
 import 'id_token.dart';
@@ -125,7 +125,6 @@ class Auth0 {
 
   Future<AuthMetaUser?> refreshSession() async {
     var r1 = await refreshToken();
-    logger.d("r1: $r1");
     var result = await r1.thenAsync<AuthMetaUser?>((t) {
       if (t == null) {
         return nullMetaUserFuture;
@@ -148,11 +147,15 @@ class Auth0 {
         await secureStorage.read(key: 'auth0_access_token');
     if (storedAccessToken != null) {
       var r = _parseAccessToken(storedAccessToken);
-      if (DateTime.fromMillisecondsSinceEpoch(r.exp * 1000)
-          .isBefore(DateTime.now())) {
+      var exp = DateTime.fromMillisecondsSinceEpoch(r.exp * 1000);
+      var now = DateTime.now();
+      logger.i("Token Expiry: $exp , Now: $now");
+      if (now.isBefore(exp)) {
+        logger.i("Using stored access token");
         return Result.ok(storedAccessToken);
       }
     }
+    logger.i("Refreshing token way too early");
     return await refreshToken().thenMap((value) => value?.accessToken);
   }
 

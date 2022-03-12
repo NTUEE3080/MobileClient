@@ -1,11 +1,12 @@
-import 'package:coursecupid/create_post.dart';
-import 'package:coursecupid/swagger_generated_code/swagger.swagger.dart';
+import 'package:coursecupid/core/resp_ext.dart';
+import 'package:coursecupid/post_creation/create_post.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 
-import 'components/error_renderer.dart';
-import 'core/api_service.dart';
-import 'http_error.dart';
+import '../api_lib/swagger.swagger.dart';
+import '../components/error_renderer.dart';
+import '../core/api_service.dart';
+import '../http_error.dart';
 
 class CreateModulePost extends StatefulWidget {
   final List<ModulePrincipalRes> modules;
@@ -23,13 +24,9 @@ class _CreateModulePost extends State<CreateModulePost> {
   HttpResponseError? createErr;
 
   Future<List<ModulePrincipalRes>> search(String? filter) {
-    var lower = filter?.toLowerCase() ?? "";
+    var f = filter ?? "";
     return Future.value(widget.modules
-        .where((x) =>
-            x.courseCode!.toLowerCase().contains(lower) ||
-            lower.contains(x.courseCode!.toLowerCase()) ||
-            x.name!.toLowerCase().contains(lower) ||
-            lower.contains(x.name!.toLowerCase()))
+        .where((x) => f.lowerCompare(x.courseCode) || f.lowerCompare(x.name))
         .toList());
   }
 
@@ -41,7 +38,8 @@ class _CreateModulePost extends State<CreateModulePost> {
   Widget build(BuildContext context) {
     var errWidget = createErr == null
         ? const SizedBox(height: 20)
-        : ErrorDisplay(createErr!);
+        : Container(
+            padding: const EdgeInsets.all(24), child: ErrorDisplay(createErr!));
     var indexChoice = _selected == null
         ? const SizedBox(height: 20)
         : CreatePostLoader(
@@ -70,6 +68,7 @@ class _CreateModulePost extends State<CreateModulePost> {
               itemAsString: (ModulePrincipalRes? u) =>
                   "${u?.courseCode}: ${u?.name}",
               onChanged: (ModulePrincipalRes? data) {
+                setState(() => _selected = null);
                 setState(() => _selected = data);
               },
             ),

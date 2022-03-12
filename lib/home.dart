@@ -1,20 +1,27 @@
+import 'package:coursecupid/StatefulHomeShell.dart';
+import 'package:coursecupid/auth/lib/user.dart';
 import 'package:coursecupid/core/animation.dart';
 import 'package:coursecupid/core/resp_ext.dart';
 import 'package:coursecupid/http_error.dart';
-import 'package:coursecupid/modules.dart';
-import 'package:coursecupid/swagger_generated_code/swagger.swagger.dart';
 import "package:flutter/material.dart";
 
+import 'api_lib/swagger.swagger.dart';
 import 'core/api_service.dart';
 import 'core/result_ext.dart';
 
 class HomeWidget extends StatelessWidget {
   const HomeWidget(
-      {Key? key, required this.title, required this.logout, required this.api})
+      {Key? key,
+      required this.title,
+      required this.logout,
+      required this.api,
+      required this.user})
       : super(key: key);
   final String title;
   final VoidCallback logout;
   final ApiService api;
+  final AuthMetaUser user;
+
 
   Future<Result<List<ModulePrincipalRes>, HttpResponseError>>
       getModuleList() async {
@@ -32,18 +39,20 @@ class HomeWidget extends StatelessWidget {
     return FutureBuilder<Result<List<ModulePrincipalRes>, HttpResponseError>>(
         future: getModuleList(),
         builder: (context, val) {
-          if (val.hasData) {
-            var v = val.data!;
-            if (v.isSuccess) {
-              return ModulesPage(
-                api: api,
-                logout: logout,
-                title: title,
-                moduleList: v.value,
-              );
-            } else {
-              return errorAnimPage;
+          if (val.connectionState == ConnectionState.done) {
+            if (val.hasData) {
+              var v = val.data!;
+              if (v.isSuccess) {
+                return StatefulHomeShell(
+                  user: user,
+                  api: api,
+                  logout: logout,
+                  title: title,
+                  moduleList: v.value,
+                );
+              }
             }
+            return errorAnimPage;
           }
           return loading;
         });

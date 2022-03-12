@@ -37,6 +37,25 @@ class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<List<ApplicationRes>>> _applicationFullGet(
+      {String? moduleId,
+      String? indexId,
+      String? postId,
+      String? applierId,
+      String? accepterId}) {
+    final $url = '/Application/full';
+    final $params = <String, dynamic>{
+      'moduleId': moduleId,
+      'indexId': indexId,
+      'postId': postId,
+      'applierId': applierId,
+      'accepterId': accepterId
+    };
+    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    return client.send<List<ApplicationRes>, ApplicationRes>($request);
+  }
+
+  @override
   Future<Response<ApplicationRes>> _applicationIdGet({required String? id}) {
     final $url = '/Application/${id}';
     final $request = Request('GET', $url, client.baseUrl);
@@ -51,12 +70,12 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<ApplicationRes>> _applicationPostIdPost(
+  Future<Response<dynamic>> _applicationPostIdPost(
       {required String? postId, required CreateApplicationReq? body}) {
     final $url = '/Application/${postId}';
     final $body = body;
     final $request = Request('POST', $url, client.baseUrl, body: $body);
-    return client.send<ApplicationRes, ApplicationRes>($request);
+    return client.send<dynamic, dynamic>($request);
   }
 
   @override
@@ -132,11 +151,11 @@ class _$Swagger extends Swagger {
   }
 
   @override
-  Future<Response<PostResp>> _postPost({required CreatePostReq? body}) {
+  Future<Response<dynamic>> _postPost({required CreatePostReq? body}) {
     final $url = '/Post';
     final $body = body;
     final $request = Request('POST', $url, client.baseUrl, body: $body);
-    return client.send<PostResp, PostResp>($request);
+    return client.send<dynamic, dynamic>($request);
   }
 
   @override

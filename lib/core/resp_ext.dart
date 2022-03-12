@@ -4,6 +4,15 @@ import 'package:chopper/chopper.dart';
 import 'package:coursecupid/core/result_ext.dart';
 import 'package:coursecupid/http_error.dart';
 
+extension StringExt on String {
+  bool lowerCompare(String? other) {
+    if ( other == null) return false;
+    var tLower = toLowerCase();
+    var oLower = other.toLowerCase();
+    return tLower.contains(oLower) || oLower.contains(tLower);
+  }
+}
+
 extension ResponseExt<T> on Response<T> {
   Result<T, HttpResponseError> toResult() {
     if (isSuccessful) {

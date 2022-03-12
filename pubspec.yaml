@@ -28,12 +28,16 @@ dependencies:
   badges: ^2.0.2
   dropdown_search: ^2.0.1
   json_theme: ^3.3.1
+  expandable: ^5.0.1
+  fluttertoast: ^8.0.9
+  pull_to_refresh: ^2.0.0
+  url_launcher: ^6.0.20
 dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.1.4
   chopper_generator: ^4.0.2
-  swagger_dart_code_generator: any
+  swagger_dart_code_generator: 2.4.2
   flutter_lints: ^1.0.0
 
 # The following section is specific to Flutter.

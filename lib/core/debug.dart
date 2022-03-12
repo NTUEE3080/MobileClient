@@ -87,19 +87,22 @@ class DebugScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const lAnim =
+        AnimationPage(asset: LottieAnimations.loading, text: "Loading...");
+    const eAnim = AnimationPage(
+        asset: LottieAnimations.dogSwimming, text: "Error - Doggie can't swim");
+
     return FutureBuilder<AppConfiguration>(
       future: AppConfiguration.fromPlatform(),
       builder: (context, val) {
-        if (val.hasData) {
-          var config = val.data!;
-          return DebugWidget(config: config);
-        } else if (val.hasError) {
-          return const AnimationPage(
-              asset: LottieAnimations.dogSwimming,
-              text: "Error - Doggie can't swim");
+        if (val.connectionState == ConnectionState.done) {
+          if (val.hasData) {
+            var config = val.data!;
+            return DebugWidget(config: config);
+          }
+          return eAnim;
         } else {
-          return const AnimationPage(
-              asset: LottieAnimations.loading, text: "Loading...");
+          return lAnim;
         }
       },
     );

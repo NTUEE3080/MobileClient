@@ -59,6 +59,13 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>https</string>
+      <string>http</string>
+      <string>mailto</string>
+    </array>
+
 	<key>DART_DEFINES</key>
     <string>$(DART_DEFINES)</string>
 </dict>
