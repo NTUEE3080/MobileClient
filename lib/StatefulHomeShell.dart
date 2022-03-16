@@ -143,9 +143,9 @@ class _ModuleState extends State<StatefulHomeShell> {
     }
     var tabBar = btmTab == BottomTabs.applications
         ? const TabBar(tabs: [
-            Tab(icon: Icon(Icons.directions_car), text: "Applied"),
-            Tab(icon: Icon(Icons.directions_transit), text: "Offers"),
-            Tab(icon: Icon(Icons.directions_bike), text: "Completed"),
+            Tab(icon: Icon(Icons.approval), text: "Applied"),
+            Tab(icon: Icon(Icons.local_offer), text: "Offers"),
+            Tab(icon: Icon(Icons.task_alt), text: "Completed"),
           ])
         : null;
     return DefaultTabController(

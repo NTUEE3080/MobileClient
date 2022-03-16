@@ -35,7 +35,7 @@ class IndexRowView extends StatelessWidget {
       title: Row(
         children: [
           Text(
-            prop.group ?? "Unknown Group",
+            '${prop.group ?? "Unknown Group"} ',
             style: t.textTheme.overline?.copyWith(
               fontWeight: FontWeight.bold,
             ),

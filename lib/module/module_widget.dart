@@ -1,5 +1,6 @@
 import 'package:coursecupid/auth/lib/user.dart';
 import 'package:coursecupid/index/index.dart';
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:json_theme/json_theme_schemas.dart';
 
@@ -63,11 +64,33 @@ class ModuleWidget extends StatelessWidget {
                 indent: 0,
                 endIndent: 0,
               ),
-              Container(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  module.description ?? "unknown description",
-                  style: t.textTheme.bodyLarge,
+              ExpandablePanel(
+                header: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 16),
+                    child: Text(
+                      "Description",
+                      style: t.textTheme.overline?.copyWith(
+                        fontSize: 14
+                      ),
+
+                    )),
+                collapsed: Container(
+                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+
+                  child: Text(
+                    module.description ?? "unknown description",
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                expanded: Container(
+                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+
+                  child: Text(
+                    module.description ?? "unknown description",
+                    style: t.textTheme.bodyLarge,
+                  ),
                 ),
               )
             ],
