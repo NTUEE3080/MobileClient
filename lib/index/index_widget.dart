@@ -1,7 +1,9 @@
+import 'package:coursecupid/auth/lib/user.dart';
 import 'package:coursecupid/index/post_view_model.dart';
 import 'package:coursecupid/post_application/post_application_load.dart';
 import 'package:flutter/material.dart';
 
+import '../api_lib/swagger.swagger.dart';
 import '../core/api_service.dart';
 import '../my_application/index_row.dart';
 
@@ -9,9 +11,16 @@ class IndexWidget extends StatelessWidget {
   final PostViewModel post; // data/state
   final ApiService api;
   final Future<void> Function() refresh;
+  final AuthMetaUser user;
+  final List<ModulePrincipalRes> modules;
 
   const IndexWidget(
-      {Key? key, required this.post, required this.api, required this.refresh})
+      {Key? key,
+      required this.post,
+      required this.api,
+      required this.refresh,
+      required this.user,
+      required this.modules})
       : super(key: key); // sets the state on construction
 
   @override
@@ -27,9 +36,7 @@ class IndexWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: post.applied
-                    ? const Icon(Icons.check)
-                    : const Icon(Icons.description),
+                leading: const Icon(Icons.description),
                 title: Text(
                   post.index.code!,
                   style: TextStyle(
@@ -85,18 +92,20 @@ class IndexWidget extends StatelessWidget {
                 children: <Widget>[
                   ElevatedButton(
                     child: const Text('Apply'),
-                    onPressed: (post.applied || post.self)
+                    onPressed: post.self
                         ? null
                         : () {
                             Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                         builder: (ctx) => PostApplicationLoader(
+                                              modules: modules,
+                                              user: user,
                                               api: api,
                                               postId: post.id,
                                             )))
-                                .then((value) async => await refresh());
-                          },
+                          .then((value) async => await refresh());
+                    },
                   )
                 ],
               ),

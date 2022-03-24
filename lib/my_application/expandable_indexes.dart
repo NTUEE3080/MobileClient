@@ -7,17 +7,21 @@ import 'index_row.dart';
 class ExpandableIndex extends StatelessWidget {
   final String? title;
   final List<IndexPrincipalRes> indexes;
+  final double inset;
 
-  const ExpandableIndex({Key? key, this.title, required this.indexes})
+  const ExpandableIndex(
+      {Key? key, this.title, required this.indexes, this.inset = 16.0})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var t = Theme.of(context);
     var cs = t.colorScheme;
-    var text = title == null ? const SizedBox(height: 4) : Text(
-      title!,
-      style: t.textTheme.overline,
+    var text = title == null
+        ? const SizedBox(height: 4)
+        : Text(
+            title!,
+            style: t.textTheme.overline,
     );
     return Column(
       children: [
@@ -25,8 +29,8 @@ class ExpandableIndex extends StatelessWidget {
         ...indexes
             .map((e) => ExpandablePanel(
                   header: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 16),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: inset, vertical: inset),
                       child: Text(
                         e.code ?? "Unknown Index",
                         style: t.textTheme.titleMedium?.copyWith(

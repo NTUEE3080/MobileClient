@@ -6,62 +6,24 @@ part of 'swagger.swagger.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ApplicationPrincipalRes _$ApplicationPrincipalResFromJson(
-        Map<String, dynamic> json) =>
-    ApplicationPrincipalRes(
-      id: json['id'] as String?,
-      postId: json['postId'] as String?,
-      status: json['status'] as String?,
-      user: json['user'] == null
-          ? null
-          : UserPrincipalResp.fromJson(json['user'] as Map<String, dynamic>),
-      offers: (json['offers'] as List<dynamic>?)
-              ?.map(
-                  (e) => IndexPrincipalRes.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-    );
-
-Map<String, dynamic> _$ApplicationPrincipalResToJson(
-        ApplicationPrincipalRes instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'postId': instance.postId,
-      'status': instance.status,
-      'user': instance.user?.toJson(),
-      'offers': instance.offers?.map((e) => e.toJson()).toList(),
-    };
-
 ApplicationRes _$ApplicationResFromJson(Map<String, dynamic> json) =>
     ApplicationRes(
-      principal: json['principal'] == null
-          ? null
-          : ApplicationPrincipalRes.fromJson(
-              json['principal'] as Map<String, dynamic>),
+      id: json['id'] as String?,
       post: json['post'] == null
           ? null
           : PostPrincipalResp.fromJson(json['post'] as Map<String, dynamic>),
+      applied: json['applied'] == null
+          ? null
+          : PostPrincipalResp.fromJson(json['applied'] as Map<String, dynamic>),
+      status: json['status'] as String?,
     );
 
 Map<String, dynamic> _$ApplicationResToJson(ApplicationRes instance) =>
     <String, dynamic>{
-      'principal': instance.principal?.toJson(),
+      'id': instance.id,
       'post': instance.post?.toJson(),
-    };
-
-CreateApplicationReq _$CreateApplicationReqFromJson(
-        Map<String, dynamic> json) =>
-    CreateApplicationReq(
-      offerId: (json['offerId'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
-    );
-
-Map<String, dynamic> _$CreateApplicationReqToJson(
-        CreateApplicationReq instance) =>
-    <String, dynamic>{
-      'offerId': instance.offerId,
+      'applied': instance.applied?.toJson(),
+      'status': instance.status,
     };
 
 CreateIndexReq _$CreateIndexReqFromJson(Map<String, dynamic> json) =>
@@ -253,48 +215,53 @@ Map<String, dynamic> _$ModuleResToJson(ModuleRes instance) => <String, dynamic>{
 PostPrincipalResp _$PostPrincipalRespFromJson(Map<String, dynamic> json) =>
     PostPrincipalResp(
       id: json['id'] as String?,
-      ownerId: json['ownerId'] as String?,
+      owner: json['owner'] == null
+          ? null
+          : UserPrincipalResp.fromJson(json['owner'] as Map<String, dynamic>),
       index: json['index'] == null
           ? null
           : IndexPrincipalRes.fromJson(json['index'] as Map<String, dynamic>),
       module: json['module'] == null
           ? null
           : ModulePrincipalRes.fromJson(json['module'] as Map<String, dynamic>),
-      completed: json['completed'] as bool?,
       lookingFor: (json['lookingFor'] as List<dynamic>?)
               ?.map(
                   (e) => IndexPrincipalRes.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
+      completed: json['completed'] as bool?,
     );
 
 Map<String, dynamic> _$PostPrincipalRespToJson(PostPrincipalResp instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'ownerId': instance.ownerId,
+      'owner': instance.owner?.toJson(),
       'index': instance.index?.toJson(),
       'module': instance.module?.toJson(),
-      'completed': instance.completed,
       'lookingFor': instance.lookingFor?.map((e) => e.toJson()).toList(),
+      'completed': instance.completed,
     };
 
 PostResp _$PostRespFromJson(Map<String, dynamic> json) => PostResp(
-      user: json['user'] == null
-          ? null
-          : UserPrincipalResp.fromJson(json['user'] as Map<String, dynamic>),
-      post: json['post'] == null
+  post: json['post'] == null
           ? null
           : PostPrincipalResp.fromJson(json['post'] as Map<String, dynamic>),
+      offers: (json['offers'] as List<dynamic>?)
+              ?.map(
+                  (e) => TradePrincipalRes.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
       applications: (json['applications'] as List<dynamic>?)
-              ?.map((e) =>
-                  ApplicationPrincipalRes.fromJson(e as Map<String, dynamic>))
+              ?.map(
+                  (e) => TradePrincipalRes.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
     );
 
-Map<String, dynamic> _$PostRespToJson(PostResp instance) => <String, dynamic>{
-      'user': instance.user?.toJson(),
+Map<String, dynamic> _$PostRespToJson(PostResp instance) =>
+    <String, dynamic>{
       'post': instance.post?.toJson(),
+      'offers': instance.offers?.map((e) => e.toJson()).toList(),
       'applications': instance.applications?.map((e) => e.toJson()).toList(),
     };
 
@@ -307,6 +274,36 @@ Map<String, dynamic> _$SemesterResToJson(SemesterRes instance) =>
     <String, dynamic>{
       'semester': instance.semester,
       'current': instance.current,
+    };
+
+TradePrincipalRes _$TradePrincipalResFromJson(Map<String, dynamic> json) =>
+    TradePrincipalRes(
+      id: json['id'] as String?,
+      owner: json['owner'] == null
+          ? null
+          : UserPrincipalResp.fromJson(json['owner'] as Map<String, dynamic>),
+      index: json['index'] == null
+          ? null
+          : IndexPrincipalRes.fromJson(json['index'] as Map<String, dynamic>),
+      module: json['module'] == null
+          ? null
+          : ModulePrincipalRes.fromJson(json['module'] as Map<String, dynamic>),
+      lookingFor: (json['lookingFor'] as List<dynamic>?)
+              ?.map(
+                  (e) => IndexPrincipalRes.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      status: json['status'] as String?,
+    );
+
+Map<String, dynamic> _$TradePrincipalResToJson(TradePrincipalRes instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'owner': instance.owner?.toJson(),
+      'index': instance.index?.toJson(),
+      'module': instance.module?.toJson(),
+      'lookingFor': instance.lookingFor?.map((e) => e.toJson()).toList(),
+      'status': instance.status,
     };
 
 UpdateUserReq _$UpdateUserReqFromJson(Map<String, dynamic> json) =>

@@ -43,10 +43,22 @@ class AnimationFrame extends StatelessWidget {
               height: 300,
             ),
             const SizedBox(height: 20.0),
-            Text(
-              text,
-              style: GoogleFonts.raleway(
-                  textStyle: Theme.of(context).textTheme.headline6),
+            Container(
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Center(
+                child: Text(
+                    text,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.raleway(textStyle: Theme
+                        .of(context)
+                        .textTheme
+                        .headline6)
+                ),
+              ),
             )
           ],
         ),
@@ -65,18 +77,30 @@ class AnimationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EmptyPage(
-        children: [
-          Lottie.asset(
-            asset,
-            width: 300,
-            height: 300,
-          ),
-          const SizedBox(height: 20.0),
-          Text(
+      children: [
+        Lottie.asset(
+          asset,
+          width: 300,
+          height: 300,
+        ),
+        const SizedBox(height: 20.0),
+        Container(
+          width: MediaQuery
+              .of(context)
+              .size
+              .width,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
             text,
-            style: GoogleFonts.raleway(textStyle: Theme.of(context).textTheme.headline6),
-          )
-        ],
+            textAlign: TextAlign.center,
+            style: GoogleFonts.raleway(
+                textStyle: Theme
+                    .of(context)
+                    .textTheme
+                    .headline6),
+          ),
+        )
+      ],
     );
   }
 }

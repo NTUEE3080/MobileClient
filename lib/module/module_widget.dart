@@ -2,7 +2,6 @@ import 'package:coursecupid/auth/lib/user.dart';
 import 'package:coursecupid/index/index.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
-import 'package:json_theme/json_theme_schemas.dart';
 
 import '../api_lib/swagger.swagger.dart';
 import '../core/api_service.dart';
@@ -11,9 +10,14 @@ class ModuleWidget extends StatelessWidget {
   final ModulePrincipalRes module; // data/state
   final ApiService api;
   final AuthMetaUser user;
+  final List<ModulePrincipalRes> modules;
 
   const ModuleWidget(
-      {Key? key, required this.module, required this.api, required this.user})
+      {Key? key,
+      required this.module,
+      required this.api,
+      required this.user,
+      required this.modules})
       : super(key: key); // sets the state on construction
 
   @override
@@ -30,6 +34,7 @@ class ModuleWidget extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (ctx) => PostLoader(
+                      modules: modules,
                           user: user,
                           api: api,
                           module: module,
@@ -70,14 +75,11 @@ class ModuleWidget extends StatelessWidget {
                         horizontal: 16, vertical: 16),
                     child: Text(
                       "Description",
-                      style: t.textTheme.overline?.copyWith(
-                        fontSize: 14
-                      ),
-
+                      style: t.textTheme.overline?.copyWith(fontSize: 14),
                     )),
                 collapsed: Container(
-                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                   child: Text(
                     module.description ?? "unknown description",
                     maxLines: 3,
@@ -85,8 +87,8 @@ class ModuleWidget extends StatelessWidget {
                   ),
                 ),
                 expanded: Container(
-                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                   child: Text(
                     module.description ?? "unknown description",
                     style: t.textTheme.bodyLarge,

@@ -15,8 +15,14 @@ class ModuleList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var children =
-        modules.map((m) => ModuleWidget(module: m, api: api, user: user,)).toList();
+    var children = modules
+        .map((m) => ModuleWidget(
+              module: m,
+              api: api,
+              user: user,
+              modules: modules,
+            ))
+        .toList();
     return ListView(
       children: children,
     );

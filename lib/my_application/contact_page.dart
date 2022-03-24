@@ -15,17 +15,18 @@ class ContactPage extends StatelessWidget {
   final AuthMetaUser user;
 
   bool get isOwner =>
-      app.post?.ownerId != null && app.post?.ownerId == user.data?.guid;
+      app.post?.owner?.id != null && app.post?.owner?.id == user.data?.guid;
 
   bool get isApplier =>
-      app.principal?.user?.id != null && app.post?.ownerId == user.data?.guid;
+      app.applied?.owner?.id != null &&
+      app.applied?.owner?.id == user.data?.guid;
 
   const ContactPage(
       {Key? key, required this.app, required this.api, required this.user})
       : super(key: key);
 
   Future<Result<UserPrincipalResp, HttpResponseError>> _loadUser() async {
-    var resp = await api.access.userIdGet(id: app.post?.ownerId);
+    var resp = await api.access.userIdGet(id: app.post?.owner?.id);
     return resp.toResult();
   }
 

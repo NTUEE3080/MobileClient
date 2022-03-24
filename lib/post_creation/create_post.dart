@@ -39,10 +39,15 @@ Widget indexBuilder(BuildContext context, IndexRes? p, bool selected) {
 class CreatePostLoader extends StatelessWidget {
   final ModulePrincipalRes module;
   final ApiService api;
+  final List<String>? offersInit;
   final void Function(HttpResponseError? e) setErr;
 
   const CreatePostLoader(
-      {Key? key, required this.module, required this.api, required this.setErr})
+      {Key? key,
+      required this.module,
+      required this.api,
+      required this.setErr,
+      this.offersInit})
       : super(key: key);
 
   Future<Result<List<IndexRes>, HttpResponseError>> getIndexList() async {
@@ -68,6 +73,7 @@ class CreatePostLoader extends StatelessWidget {
               var v = val.data!;
               if (v.isSuccess) {
                 return CreatePost(
+                  indexInit: offersInit,
                   indexes: v.value,
                   module: module,
                   api: api,
@@ -86,6 +92,7 @@ class CreatePostLoader extends StatelessWidget {
 class CreatePost extends StatefulWidget {
   final ModulePrincipalRes module;
   final List<IndexRes> indexes;
+  final List<String>? indexInit;
   final ApiService api;
   final void Function(HttpResponseError? e) setErr;
 
@@ -94,7 +101,8 @@ class CreatePost extends StatefulWidget {
       required this.module,
       required this.indexes,
       required this.api,
-      required this.setErr})
+      required this.setErr,
+      this.indexInit})
       : super(key: key);
 
   @override
@@ -130,6 +138,22 @@ class _CreatePostState extends State<CreatePost> {
   IndexRes? _wantSelected;
   IndexRes? _haveSelected;
   bool loading = false;
+
+  @override
+  initState() {
+    var cond = widget.indexInit?.every((s) =>
+            widget.indexes.where((x) => x.principal?.id == s).isNotEmpty) ??
+        false;
+    if (cond) {
+      var offerInit = widget.indexInit
+          ?.map((x) => widget.indexes
+              .firstWhere((e) => (e.principal?.id ?? "non-id") == x))
+          .toList();
+      offers = [...?offerInit];
+    }
+
+    super.initState();
+  }
 
   busy() => setState(() => loading = true);
 

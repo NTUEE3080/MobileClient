@@ -1,6 +1,6 @@
 import 'package:coursecupid/api_lib/swagger.swagger.dart';
-import 'package:flutter/material.dart';
 import 'package:coursecupid/auth/lib/user.dart';
+import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'expandable_indexes.dart';
@@ -22,10 +22,11 @@ class ContactWidget extends StatelessWidget {
   String get courseName => app.post?.module?.name ?? "Unknown module";
 
   bool get isOwner =>
-      app.post?.ownerId != null && app.post?.ownerId == user.data?.guid;
+      app.post?.owner?.id != null && app.post?.owner?.id == user.data?.guid;
 
   bool get isApplier =>
-      app.principal?.user?.id != null && app.post?.ownerId == user.data?.guid;
+      app.applied?.owner?.id != null &&
+      app.applied?.owner?.id == user.data?.guid;
 
   const ContactWidget(
       {Key? key, required this.app, required this.user, required this.postUser})
@@ -36,12 +37,13 @@ class ContactWidget extends StatelessWidget {
     var t = Theme.of(context);
     var cs = t.colorScheme;
     var pIndex = app.post?.index;
+    var oIndex = app.applied?.index;
     var postIndexes = (pIndex == null ? <IndexPrincipalRes>[] : [pIndex]);
-    var offerIndexes = [...?app.principal?.offers];
+    var offerIndexes = (oIndex == null ? <IndexPrincipalRes>[] : [oIndex]);
     List<IndexPrincipalRes> yours = isOwner ? postIndexes : offerIndexes;
     List<IndexPrincipalRes> theirs = isOwner ? offerIndexes : postIndexes;
     var email = isOwner
-        ? app.principal?.user?.email ?? "unknown email"
+        ? app.post?.owner?.email ?? "unknown email"
         : postUser.email ?? "unknown email";
     return Scaffold(
         appBar: AppBar(

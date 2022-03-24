@@ -1,15 +1,16 @@
 // ignore_for_file: type=lint
 
-import 'package:json_annotation/json_annotation.dart';
-import 'package:collection/collection.dart';
-
-import 'package:chopper/chopper.dart';
 import 'dart:convert';
 
-import 'client_mapping.dart';
+import 'package:chopper/chopper.dart';
 import 'package:chopper/chopper.dart' as chopper;
+import 'package:collection/collection.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+import 'client_mapping.dart';
 
 part 'swagger.swagger.chopper.dart';
+
 part 'swagger.swagger.g.dart';
 
 // **************************************************************************
@@ -35,120 +36,43 @@ abstract class Swagger extends ChopperService {
   }
 
   ///
-  ///@param moduleId
-  ///@param indexId
-  ///@param postId
+  ///@param posterId
   ///@param applierId
-  ///@param accepterId
-  Future<chopper.Response<List<ApplicationPrincipalRes>>> applicationGet(
-      {String? moduleId,
-      String? indexId,
-      String? postId,
-      String? applierId,
-      String? accepterId}) {
+  ///@param status
+  Future<chopper.Response<List<ApplicationRes>>> applicationGet(
+      {String? posterId, String? applierId, String? status}) {
     generatedMapping.putIfAbsent(
-        ApplicationPrincipalRes, () => ApplicationPrincipalRes.fromJsonFactory);
+        ApplicationRes, () => ApplicationRes.fromJsonFactory);
 
     return _applicationGet(
-        moduleId: moduleId,
-        indexId: indexId,
-        postId: postId,
-        applierId: applierId,
-        accepterId: accepterId);
+        posterId: posterId, applierId: applierId, status: status);
   }
 
   ///
-  ///@param moduleId
-  ///@param indexId
-  ///@param postId
+  ///@param posterId
   ///@param applierId
-  ///@param accepterId
+  ///@param status
   @Get(path: '/Application')
-  Future<chopper.Response<List<ApplicationPrincipalRes>>> _applicationGet(
-      {@Query('moduleId') String? moduleId,
-      @Query('indexId') String? indexId,
-      @Query('postId') String? postId,
+  Future<chopper.Response<List<ApplicationRes>>> _applicationGet(
+      {@Query('posterId') String? posterId,
       @Query('applierId') String? applierId,
-      @Query('accepterId') String? accepterId});
-
-  ///
-  ///@param moduleId
-  ///@param indexId
-  ///@param postId
-  ///@param applierId
-  ///@param accepterId
-  Future<chopper.Response<List<ApplicationRes>>> applicationFullGet(
-      {String? moduleId,
-      String? indexId,
-      String? postId,
-      String? applierId,
-      String? accepterId}) {
-    generatedMapping.putIfAbsent(
-        ApplicationRes, () => ApplicationRes.fromJsonFactory);
-
-    return _applicationFullGet(
-        moduleId: moduleId,
-        indexId: indexId,
-        postId: postId,
-        applierId: applierId,
-        accepterId: accepterId);
-  }
-
-  ///
-  ///@param moduleId
-  ///@param indexId
-  ///@param postId
-  ///@param applierId
-  ///@param accepterId
-  @Get(path: '/Application/full')
-  Future<chopper.Response<List<ApplicationRes>>> _applicationFullGet(
-      {@Query('moduleId') String? moduleId,
-      @Query('indexId') String? indexId,
-      @Query('postId') String? postId,
-      @Query('applierId') String? applierId,
-      @Query('accepterId') String? accepterId});
-
-  ///
-  ///@param id
-  Future<chopper.Response<ApplicationRes>> applicationIdGet(
-      {required String? id}) {
-    generatedMapping.putIfAbsent(
-        ApplicationRes, () => ApplicationRes.fromJsonFactory);
-
-    return _applicationIdGet(id: id);
-  }
-
-  ///
-  ///@param id
-  @Get(path: '/Application/{id}')
-  Future<chopper.Response<ApplicationRes>> _applicationIdGet(
-      {@Path('id') required String? id});
-
-  ///
-  ///@param id
-  Future<chopper.Response> applicationIdDelete({required String? id}) {
-    return _applicationIdDelete(id: id);
-  }
-
-  ///
-  ///@param id
-  @Delete(path: '/Application/{id}')
-  Future<chopper.Response> _applicationIdDelete(
-      {@Path('id') required String? id});
+      @Query('status') String? status});
 
   ///
   ///@param postId
-  Future<chopper.Response> applicationPostIdPost(
-      {required String? postId, required CreateApplicationReq? body}) {
-    return _applicationPostIdPost(postId: postId, body: body);
+  ///@param appId
+  Future<chopper.Response> applicationPostIdAppIdPost(
+      {required String? postId, required String? appId}) {
+    return _applicationPostIdAppIdPost(postId: postId, appId: appId);
   }
 
   ///
   ///@param postId
-  @Post(path: '/Application/{postId}')
-  Future<chopper.Response> _applicationPostIdPost(
+  ///@param appId
+  @Post(path: '/Application/{postId}/{appId}', optionalBody: true)
+  Future<chopper.Response> _applicationPostIdAppIdPost(
       {@Path('postId') required String? postId,
-      @Body() required CreateApplicationReq? body});
+      @Path('appId') required String? appId});
 
   ///
   ///@param semester
@@ -241,40 +165,50 @@ abstract class Swagger extends ChopperService {
 
   ///
   ///@param semester
+  ///@param curateFor
   ///@param posterId
   ///@param moduleId
   ///@param indexId
   ///@param lookId
+  ///@param completed
   Future<chopper.Response<List<PostPrincipalResp>>> postGet(
       {String? semester,
+      String? curateFor,
       String? posterId,
       String? moduleId,
       String? indexId,
-      String? lookId}) {
+      String? lookId,
+      bool? completed}) {
     generatedMapping.putIfAbsent(
         PostPrincipalResp, () => PostPrincipalResp.fromJsonFactory);
 
     return _postGet(
         semester: semester,
+        curateFor: curateFor,
         posterId: posterId,
         moduleId: moduleId,
         indexId: indexId,
-        lookId: lookId);
+        lookId: lookId,
+        completed: completed);
   }
 
   ///
   ///@param semester
+  ///@param curateFor
   ///@param posterId
   ///@param moduleId
   ///@param indexId
   ///@param lookId
+  ///@param completed
   @Get(path: '/Post')
   Future<chopper.Response<List<PostPrincipalResp>>> _postGet(
       {@Query('semester') String? semester,
+      @Query('curateFor') String? curateFor,
       @Query('posterId') String? posterId,
       @Query('moduleId') String? moduleId,
       @Query('indexId') String? indexId,
-      @Query('lookId') String? lookId});
+      @Query('lookId') String? lookId,
+      @Query('completed') bool? completed});
 
   ///
   Future<chopper.Response> postPost({required CreatePostReq? body}) {
@@ -470,93 +404,28 @@ abstract class Swagger extends ChopperService {
 }
 
 @JsonSerializable(explicitToJson: true)
-class ApplicationPrincipalRes {
-  ApplicationPrincipalRes({
-    this.id,
-    this.postId,
-    this.status,
-    this.user,
-    this.offers,
-  });
-
-  factory ApplicationPrincipalRes.fromJson(Map<String, dynamic> json) =>
-      _$ApplicationPrincipalResFromJson(json);
-
-  @JsonKey(name: 'id')
-  final String? id;
-  @JsonKey(name: 'postId')
-  final String? postId;
-  @JsonKey(name: 'status')
-  final String? status;
-  @JsonKey(name: 'user')
-  final UserPrincipalResp? user;
-  @JsonKey(name: 'offers', defaultValue: <IndexPrincipalRes>[])
-  final List<IndexPrincipalRes>? offers;
-  static const fromJsonFactory = _$ApplicationPrincipalResFromJson;
-  static const toJsonFactory = _$ApplicationPrincipalResToJson;
-  Map<String, dynamic> toJson() => _$ApplicationPrincipalResToJson(this);
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other is ApplicationPrincipalRes &&
-            (identical(other.id, id) ||
-                const DeepCollectionEquality().equals(other.id, id)) &&
-            (identical(other.postId, postId) ||
-                const DeepCollectionEquality().equals(other.postId, postId)) &&
-            (identical(other.status, status) ||
-                const DeepCollectionEquality().equals(other.status, status)) &&
-            (identical(other.user, user) ||
-                const DeepCollectionEquality().equals(other.user, user)) &&
-            (identical(other.offers, offers) ||
-                const DeepCollectionEquality().equals(other.offers, offers)));
-  }
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(id) ^
-      const DeepCollectionEquality().hash(postId) ^
-      const DeepCollectionEquality().hash(status) ^
-      const DeepCollectionEquality().hash(user) ^
-      const DeepCollectionEquality().hash(offers) ^
-      runtimeType.hashCode;
-}
-
-extension $ApplicationPrincipalResExtension on ApplicationPrincipalRes {
-  ApplicationPrincipalRes copyWith(
-      {String? id,
-      String? postId,
-      String? status,
-      UserPrincipalResp? user,
-      List<IndexPrincipalRes>? offers}) {
-    return ApplicationPrincipalRes(
-        id: id ?? this.id,
-        postId: postId ?? this.postId,
-        status: status ?? this.status,
-        user: user ?? this.user,
-        offers: offers ?? this.offers);
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
 class ApplicationRes {
   ApplicationRes({
-    this.principal,
+    this.id,
     this.post,
+    this.applied,
+    this.status,
   });
 
   factory ApplicationRes.fromJson(Map<String, dynamic> json) =>
       _$ApplicationResFromJson(json);
 
-  @JsonKey(name: 'principal')
-  final ApplicationPrincipalRes? principal;
+  @JsonKey(name: 'id')
+  final String? id;
   @JsonKey(name: 'post')
   final PostPrincipalResp? post;
+  @JsonKey(name: 'applied')
+  final PostPrincipalResp? applied;
+  @JsonKey(name: 'status')
+  final String? status;
   static const fromJsonFactory = _$ApplicationResFromJson;
   static const toJsonFactory = _$ApplicationResToJson;
+
   Map<String, dynamic> toJson() => _$ApplicationResToJson(this);
 
   @override
@@ -566,62 +435,37 @@ class ApplicationRes {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is ApplicationRes &&
-            (identical(other.principal, principal) ||
-                const DeepCollectionEquality()
-                    .equals(other.principal, principal)) &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
             (identical(other.post, post) ||
-                const DeepCollectionEquality().equals(other.post, post)));
+                const DeepCollectionEquality().equals(other.post, post)) &&
+            (identical(other.applied, applied) ||
+                const DeepCollectionEquality()
+                    .equals(other.applied, applied)) &&
+            (identical(other.status, status) ||
+                const DeepCollectionEquality().equals(other.status, status)));
   }
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(principal) ^
+      const DeepCollectionEquality().hash(id) ^
       const DeepCollectionEquality().hash(post) ^
+      const DeepCollectionEquality().hash(applied) ^
+      const DeepCollectionEquality().hash(status) ^
       runtimeType.hashCode;
 }
 
 extension $ApplicationResExtension on ApplicationRes {
   ApplicationRes copyWith(
-      {ApplicationPrincipalRes? principal, PostPrincipalResp? post}) {
+      {String? id,
+      PostPrincipalResp? post,
+      PostPrincipalResp? applied,
+      String? status}) {
     return ApplicationRes(
-        principal: principal ?? this.principal, post: post ?? this.post);
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class CreateApplicationReq {
-  CreateApplicationReq({
-    this.offerId,
-  });
-
-  factory CreateApplicationReq.fromJson(Map<String, dynamic> json) =>
-      _$CreateApplicationReqFromJson(json);
-
-  @JsonKey(name: 'offerId', defaultValue: <String>[])
-  final List<String>? offerId;
-  static const fromJsonFactory = _$CreateApplicationReqFromJson;
-  static const toJsonFactory = _$CreateApplicationReqToJson;
-  Map<String, dynamic> toJson() => _$CreateApplicationReqToJson(this);
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other is CreateApplicationReq &&
-            (identical(other.offerId, offerId) ||
-                const DeepCollectionEquality().equals(other.offerId, offerId)));
-  }
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(offerId) ^ runtimeType.hashCode;
-}
-
-extension $CreateApplicationReqExtension on CreateApplicationReq {
-  CreateApplicationReq copyWith({List<String>? offerId}) {
-    return CreateApplicationReq(offerId: offerId ?? this.offerId);
+        id: id ?? this.id,
+        post: post ?? this.post,
+        applied: applied ?? this.applied,
+        status: status ?? this.status);
   }
 }
 
@@ -1290,11 +1134,11 @@ extension $ModuleResExtension on ModuleRes {
 class PostPrincipalResp {
   PostPrincipalResp({
     this.id,
-    this.ownerId,
+    this.owner,
     this.index,
     this.module,
-    this.completed,
     this.lookingFor,
+    this.completed,
   });
 
   factory PostPrincipalResp.fromJson(Map<String, dynamic> json) =>
@@ -1302,18 +1146,19 @@ class PostPrincipalResp {
 
   @JsonKey(name: 'id')
   final String? id;
-  @JsonKey(name: 'ownerId')
-  final String? ownerId;
+  @JsonKey(name: 'owner')
+  final UserPrincipalResp? owner;
   @JsonKey(name: 'index')
   final IndexPrincipalRes? index;
   @JsonKey(name: 'module')
   final ModulePrincipalRes? module;
-  @JsonKey(name: 'completed')
-  final bool? completed;
   @JsonKey(name: 'lookingFor', defaultValue: <IndexPrincipalRes>[])
   final List<IndexPrincipalRes>? lookingFor;
+  @JsonKey(name: 'completed')
+  final bool? completed;
   static const fromJsonFactory = _$PostPrincipalRespFromJson;
   static const toJsonFactory = _$PostPrincipalRespToJson;
+
   Map<String, dynamic> toJson() => _$PostPrincipalRespToJson(this);
 
   @override
@@ -1325,69 +1170,69 @@ class PostPrincipalResp {
         (other is PostPrincipalResp &&
             (identical(other.id, id) ||
                 const DeepCollectionEquality().equals(other.id, id)) &&
-            (identical(other.ownerId, ownerId) ||
-                const DeepCollectionEquality()
-                    .equals(other.ownerId, ownerId)) &&
+            (identical(other.owner, owner) ||
+                const DeepCollectionEquality().equals(other.owner, owner)) &&
             (identical(other.index, index) ||
                 const DeepCollectionEquality().equals(other.index, index)) &&
             (identical(other.module, module) ||
                 const DeepCollectionEquality().equals(other.module, module)) &&
-            (identical(other.completed, completed) ||
-                const DeepCollectionEquality()
-                    .equals(other.completed, completed)) &&
             (identical(other.lookingFor, lookingFor) ||
                 const DeepCollectionEquality()
-                    .equals(other.lookingFor, lookingFor)));
+                    .equals(other.lookingFor, lookingFor)) &&
+            (identical(other.completed, completed) ||
+                const DeepCollectionEquality()
+                    .equals(other.completed, completed)));
   }
 
   @override
   int get hashCode =>
       const DeepCollectionEquality().hash(id) ^
-      const DeepCollectionEquality().hash(ownerId) ^
+      const DeepCollectionEquality().hash(owner) ^
       const DeepCollectionEquality().hash(index) ^
       const DeepCollectionEquality().hash(module) ^
-      const DeepCollectionEquality().hash(completed) ^
       const DeepCollectionEquality().hash(lookingFor) ^
+      const DeepCollectionEquality().hash(completed) ^
       runtimeType.hashCode;
 }
 
 extension $PostPrincipalRespExtension on PostPrincipalResp {
   PostPrincipalResp copyWith(
       {String? id,
-      String? ownerId,
+      UserPrincipalResp? owner,
       IndexPrincipalRes? index,
       ModulePrincipalRes? module,
-      bool? completed,
-      List<IndexPrincipalRes>? lookingFor}) {
+      List<IndexPrincipalRes>? lookingFor,
+      bool? completed}) {
     return PostPrincipalResp(
         id: id ?? this.id,
-        ownerId: ownerId ?? this.ownerId,
+        owner: owner ?? this.owner,
         index: index ?? this.index,
         module: module ?? this.module,
-        completed: completed ?? this.completed,
-        lookingFor: lookingFor ?? this.lookingFor);
+        lookingFor: lookingFor ?? this.lookingFor,
+        completed: completed ?? this.completed);
   }
 }
 
 @JsonSerializable(explicitToJson: true)
 class PostResp {
   PostResp({
-    this.user,
     this.post,
+    this.offers,
     this.applications,
   });
 
   factory PostResp.fromJson(Map<String, dynamic> json) =>
       _$PostRespFromJson(json);
 
-  @JsonKey(name: 'user')
-  final UserPrincipalResp? user;
   @JsonKey(name: 'post')
   final PostPrincipalResp? post;
-  @JsonKey(name: 'applications', defaultValue: <ApplicationPrincipalRes>[])
-  final List<ApplicationPrincipalRes>? applications;
+  @JsonKey(name: 'offers', defaultValue: <TradePrincipalRes>[])
+  final List<TradePrincipalRes>? offers;
+  @JsonKey(name: 'applications', defaultValue: <TradePrincipalRes>[])
+  final List<TradePrincipalRes>? applications;
   static const fromJsonFactory = _$PostRespFromJson;
   static const toJsonFactory = _$PostRespToJson;
+
   Map<String, dynamic> toJson() => _$PostRespToJson(this);
 
   @override
@@ -1397,10 +1242,10 @@ class PostResp {
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is PostResp &&
-            (identical(other.user, user) ||
-                const DeepCollectionEquality().equals(other.user, user)) &&
             (identical(other.post, post) ||
                 const DeepCollectionEquality().equals(other.post, post)) &&
+            (identical(other.offers, offers) ||
+                const DeepCollectionEquality().equals(other.offers, offers)) &&
             (identical(other.applications, applications) ||
                 const DeepCollectionEquality()
                     .equals(other.applications, applications)));
@@ -1408,20 +1253,20 @@ class PostResp {
 
   @override
   int get hashCode =>
-      const DeepCollectionEquality().hash(user) ^
       const DeepCollectionEquality().hash(post) ^
+      const DeepCollectionEquality().hash(offers) ^
       const DeepCollectionEquality().hash(applications) ^
       runtimeType.hashCode;
 }
 
 extension $PostRespExtension on PostResp {
   PostResp copyWith(
-      {UserPrincipalResp? user,
-      PostPrincipalResp? post,
-      List<ApplicationPrincipalRes>? applications}) {
+      {PostPrincipalResp? post,
+      List<TradePrincipalRes>? offers,
+      List<TradePrincipalRes>? applications}) {
     return PostResp(
-        user: user ?? this.user,
         post: post ?? this.post,
+        offers: offers ?? this.offers,
         applications: applications ?? this.applications);
   }
 }
@@ -1469,6 +1314,88 @@ extension $SemesterResExtension on SemesterRes {
   SemesterRes copyWith({String? semester, bool? current}) {
     return SemesterRes(
         semester: semester ?? this.semester, current: current ?? this.current);
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class TradePrincipalRes {
+  TradePrincipalRes({
+    this.id,
+    this.owner,
+    this.index,
+    this.module,
+    this.lookingFor,
+    this.status,
+  });
+
+  factory TradePrincipalRes.fromJson(Map<String, dynamic> json) =>
+      _$TradePrincipalResFromJson(json);
+
+  @JsonKey(name: 'id')
+  final String? id;
+  @JsonKey(name: 'owner')
+  final UserPrincipalResp? owner;
+  @JsonKey(name: 'index')
+  final IndexPrincipalRes? index;
+  @JsonKey(name: 'module')
+  final ModulePrincipalRes? module;
+  @JsonKey(name: 'lookingFor', defaultValue: <IndexPrincipalRes>[])
+  final List<IndexPrincipalRes>? lookingFor;
+  @JsonKey(name: 'status')
+  final String? status;
+  static const fromJsonFactory = _$TradePrincipalResFromJson;
+  static const toJsonFactory = _$TradePrincipalResToJson;
+
+  Map<String, dynamic> toJson() => _$TradePrincipalResToJson(this);
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is TradePrincipalRes &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.owner, owner) ||
+                const DeepCollectionEquality().equals(other.owner, owner)) &&
+            (identical(other.index, index) ||
+                const DeepCollectionEquality().equals(other.index, index)) &&
+            (identical(other.module, module) ||
+                const DeepCollectionEquality().equals(other.module, module)) &&
+            (identical(other.lookingFor, lookingFor) ||
+                const DeepCollectionEquality()
+                    .equals(other.lookingFor, lookingFor)) &&
+            (identical(other.status, status) ||
+                const DeepCollectionEquality().equals(other.status, status)));
+  }
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(owner) ^
+      const DeepCollectionEquality().hash(index) ^
+      const DeepCollectionEquality().hash(module) ^
+      const DeepCollectionEquality().hash(lookingFor) ^
+      const DeepCollectionEquality().hash(status) ^
+      runtimeType.hashCode;
+}
+
+extension $TradePrincipalResExtension on TradePrincipalRes {
+  TradePrincipalRes copyWith(
+      {String? id,
+      UserPrincipalResp? owner,
+      IndexPrincipalRes? index,
+      ModulePrincipalRes? module,
+      List<IndexPrincipalRes>? lookingFor,
+      String? status}) {
+    return TradePrincipalRes(
+        id: id ?? this.id,
+        owner: owner ?? this.owner,
+        index: index ?? this.index,
+        module: module ?? this.module,
+        lookingFor: lookingFor ?? this.lookingFor,
+        status: status ?? this.status);
   }
 }
 

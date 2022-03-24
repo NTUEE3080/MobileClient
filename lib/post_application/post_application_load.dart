@@ -1,4 +1,5 @@
 import 'package:coursecupid/api_lib/swagger.swagger.dart';
+import 'package:coursecupid/auth/lib/user.dart';
 import 'package:coursecupid/core/animation.dart';
 import 'package:coursecupid/core/api_service.dart';
 import 'package:coursecupid/core/resp_ext.dart';
@@ -6,8 +7,6 @@ import 'package:coursecupid/core/result_ext.dart';
 import 'package:coursecupid/http_error.dart';
 import 'package:coursecupid/post_application/application_page.dart';
 import 'package:flutter/material.dart';
-
-import '../post_creation/create_module_post.dart';
 
 class ApplicationViewModel {
   final List<IndexRes> indexes;
@@ -19,16 +18,21 @@ class ApplicationViewModel {
 class PostApplicationLoader extends StatelessWidget {
   final ApiService api;
   final String postId;
+  final AuthMetaUser user;
+  final List<ModulePrincipalRes> modules;
 
   const PostApplicationLoader(
-      {Key? key, required this.api, required this.postId})
+      {Key? key,
+      required this.api,
+      required this.postId,
+      required this.user,
+      required this.modules})
       : super(key: key);
 
   Future<Result<ApplicationViewModel, HttpResponseError>> _getVM() async {
     var r = await _loadPost();
     return r.thenAsync((post) => _getIndexList(post.post?.module)
-        .thenMap((indexes) => ApplicationViewModel(indexes, post))
-    );
+        .thenMap((indexes) => ApplicationViewModel(indexes, post)));
   }
 
   Future<Result<List<IndexRes>, HttpResponseError>> _getIndexList(
@@ -52,7 +56,6 @@ class PostApplicationLoader extends StatelessWidget {
 
   Future<Result<PostResp, HttpResponseError>> _loadPost() async {
     var resp = await api.access.postIdGet(id: postId);
-    logger.e(resp);
     return resp.toResult();
   }
 
@@ -70,8 +73,10 @@ class PostApplicationLoader extends StatelessWidget {
             var d = val.data!;
             if (d.isSuccess) {
               return CreateApplicationPage(
+                user: user,
                 api: api,
                 vm: d.value,
+                modules: modules,
               );
             }
             logger.e(d.error.type);

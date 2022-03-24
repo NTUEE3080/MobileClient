@@ -14,9 +14,14 @@ class PostLoader extends StatefulWidget {
   final ApiService api;
   final ModulePrincipalRes module;
   final AuthMetaUser user;
+  final List<ModulePrincipalRes> modules;
 
   const PostLoader(
-      {Key? key, required this.api, required this.module, required this.user})
+      {Key? key,
+      required this.api,
+      required this.module,
+      required this.user,
+      required this.modules})
       : super(key: key);
 
   @override
@@ -26,31 +31,8 @@ class PostLoader extends StatefulWidget {
 class _PostLoaderState extends State<PostLoader> {
   Future<Result<List<PostViewModel>, HttpResponseError>>
       _loadViewModels() async {
-    return await _loadPosts().andThenAsync((posts) async {
-      var apps = await _loadApplications();
-      return apps.mapValue((a) =>
-          posts.map((p) => PostViewModel.from(p, a, widget.user)).toList());
-    });
-  }
-
-  Future<Result<List<ApplicationPrincipalRes>, HttpResponseError>>
-      _loadApplications() async {
-    Result<String, HttpResponseError> userR = widget.user.data?.guid == null
-        ? Result.error(HttpResponseError(
-            type: "User not found",
-            instance: "user",
-            detail:
-                "User data not found despite being logged in, perhaps onboarding skipped?",
-            status: 401,
-            title: "User data not found",
-            traceId: "none",
-            errors: noOpError,
-          ))
-        : Result.ok(widget.user.data!.guid);
-    return await userR.thenAsync((uid) async {
-      var r = await widget.api.access
-          .applicationGet(moduleId: widget.module.id, applierId: uid);
-      return r.toResult();
+    return await _loadPosts().thenMap((posts) {
+      return posts.map((p) => PostViewModel.from(p, widget.user)).toList();
     });
   }
 
@@ -59,6 +41,8 @@ class _PostLoaderState extends State<PostLoader> {
     return (await widget.api.access.postGet(
       semester: widget.module.semester,
       moduleId: widget.module.id,
+      curateFor: widget.user.data?.guid,
+      completed: false,
     ))
         .toResult();
   }
@@ -76,7 +60,6 @@ class _PostLoaderState extends State<PostLoader> {
     setState(() => result = r);
   }
 
-
   @override
   Widget build(BuildContext context) {
     var errorAnimPage = const AnimationPage(
@@ -86,14 +69,15 @@ class _PostLoaderState extends State<PostLoader> {
 
     if (result == null) {
       return loading;
-    }else if(result!.isSuccess) {
+    } else if (result!.isSuccess) {
       return IndexPage(
-          postList: result!.value,
-          api: widget.api,
-          module: widget.module,
-          refresh: _refresh,
+        user: widget.user,
+        postList: result!.value,
+        api: widget.api,
+        module: widget.module,
+        refresh: _refresh,
+        modules: widget.modules,
       );
-
     } else {
       return errorAnimPage;
     }

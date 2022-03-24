@@ -9,9 +9,10 @@ import 'package:coursecupid/my_application/application_page.dart';
 import 'package:flutter/material.dart';
 
 class AppLoadType {
-  static const String My = "My";
-  static const String Offer = "Offer";
-  static const String Done = "Done";
+  static const String applied = "My";
+  static const String rejected = "Rejected";
+  static const String offer = "Offer";
+  static const String done = "Done";
 }
 
 class ApplicationLoader extends StatefulWidget {
@@ -36,31 +37,36 @@ class ApplicationLoader extends StatefulWidget {
 
 class _ApplicationLoaderState extends State<ApplicationLoader> {
   Future<Result<List<ApplicationRes>, HttpResponseError>> _getOffer() async {
-    var r = await widget.api.access.applicationFullGet(
-      accepterId: widget.user.data?.guid ?? "",
+    var r = await widget.api.access.applicationGet(
+      posterId: widget.user.data?.guid ?? "",
+      status: "pending",
     );
-    return r.toResult().mapValue((value) => value
-        .where((element) => element.principal?.status == "pending")
-        .toList());
+    return r.toResult();
+  }
+
+  Future<Result<List<ApplicationRes>, HttpResponseError>> _getApplied() async {
+    var r = await widget.api.access.applicationGet(
+      applierId: widget.user.data?.guid ?? "",
+      status: "pending",
+    );
+    return r.toResult();
   }
 
   Future<Result<List<ApplicationRes>, HttpResponseError>>
       _getOfferDone() async {
-    var r = await widget.api.access.applicationFullGet(
-      accepterId: widget.user.data?.guid ?? "",
+    var r = await widget.api.access.applicationGet(
+      posterId: widget.user.data?.guid ?? "",
+      status: "accepted",
     );
-    return r.toResult().mapValue((value) => value
-        .where((element) => element.principal?.status == "accepted")
-        .toList());
+    return r.toResult();
   }
 
   Future<Result<List<ApplicationRes>, HttpResponseError>> _getMyDone() async {
-    var r = await widget.api.access.applicationFullGet(
+    var r = await widget.api.access.applicationGet(
       applierId: widget.user.data?.guid ?? "",
+      status: "accepted",
     );
-    return r.toResult().mapValue((value) => value
-        .where((element) => element.principal?.status == "accepted")
-        .toList());
+    return r.toResult();
   }
 
   Future<Result<List<ApplicationRes>, HttpResponseError>> _getDone() async {
@@ -68,13 +74,12 @@ class _ApplicationLoaderState extends State<ApplicationLoader> {
         (value) => _getOfferDone().thenMap((v) => [...value, ...v]));
   }
 
-  Future<Result<List<ApplicationRes>, HttpResponseError>> _getMy() async {
-    var r = await widget.api.access.applicationFullGet(
+  Future<Result<List<ApplicationRes>, HttpResponseError>> _getRejected() async {
+    var r = await widget.api.access.applicationGet(
       applierId: widget.user.data?.guid ?? "",
+      status: "rejected",
     );
-    return r.toResult().mapValue((value) => value
-        .where((element) => element.principal?.status != "accepted")
-        .toList());
+    return r.toResult();
   }
 
   Future<Result<List<ApplicationRes>, HttpResponseError>> _getApplications() {
@@ -88,11 +93,13 @@ class _ApplicationLoaderState extends State<ApplicationLoader> {
     );
 
     switch (widget.loadType) {
-      case AppLoadType.Done:
+      case AppLoadType.done:
         return _getDone();
-      case AppLoadType.My:
-        return _getMy();
-      case AppLoadType.Offer:
+      case AppLoadType.applied:
+        return _getApplied();
+      case AppLoadType.rejected:
+        return _getRejected();
+      case AppLoadType.offer:
         return _getOffer();
       default:
         return Future.value(Result.error(e));

@@ -1,3 +1,4 @@
+import 'package:coursecupid/auth/lib/user.dart';
 import 'package:coursecupid/core/api_service.dart';
 import 'package:coursecupid/core/resp_ext.dart';
 import 'package:coursecupid/index/post_view_model.dart';
@@ -14,11 +15,15 @@ class IndexPage extends StatefulWidget {
       required this.postList,
       required this.api,
       required this.module,
-      required this.refresh})
+      required this.refresh,
+      required this.user,
+      required this.modules})
       : super(key: key);
   final List<PostViewModel> postList;
   final ModulePrincipalRes module;
   final ApiService api;
+  final AuthMetaUser user;
+  final List<ModulePrincipalRes> modules;
   final Future<void> Function() refresh;
 
   @override
@@ -34,7 +39,7 @@ class _ModuleState extends State<IndexPage> {
   // States
   final TextEditingController _controller = TextEditingController();
   final RefreshController _rController =
-      RefreshController(initialRefresh: false);
+  RefreshController(initialRefresh: false);
 
   List<PostViewModel> fullList = [];
   List<PostViewModel> filteredList = [];
@@ -66,7 +71,7 @@ class _ModuleState extends State<IndexPage> {
 
   @override
   void initState() {
-    appBarTitle =Text("${widget.module.courseCode} Posts");
+    appBarTitle = Text("${widget.module.courseCode} Posts");
     fullList = widget.postList;
     filteredList = fullList;
     _controller.addListener(_searchListener);
@@ -96,7 +101,7 @@ class _ModuleState extends State<IndexPage> {
         );
       } else {
         _searchIcon = const Icon(Icons.search);
-        appBarTitle =Text("${widget.module.courseCode} Posts");
+        appBarTitle = Text("${widget.module.courseCode} Posts");
         filteredList = fullList;
         _controller.clear();
       }
@@ -113,9 +118,11 @@ class _ModuleState extends State<IndexPage> {
     var list = ListView(
         children: filteredList
             .map((p) => IndexWidget(
+          user: widget.user,
                   post: p,
                   api: widget.api,
                   refresh: widget.refresh,
+                  modules: widget.modules,
                 ))
             .toList());
     var child = filteredList.isEmpty ? emptyBox : list;

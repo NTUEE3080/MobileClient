@@ -1,21 +1,31 @@
+import 'package:coursecupid/auth/frame.dart';
+import 'package:coursecupid/auth/lib/user.dart';
 import 'package:coursecupid/core/resp_ext.dart';
-import 'package:coursecupid/my_application/index_row.dart';
+import 'package:coursecupid/post_application/application_create_header.dart';
 import 'package:coursecupid/post_application/post_application_load.dart';
-import 'package:coursecupid/post_creation/create_post.dart';
-import 'package:dropdown_search/dropdown_search.dart';
+import 'package:coursecupid/post_application/single_post_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../api_lib/swagger.swagger.dart';
 import '../components/error_renderer.dart';
 import '../core/animation.dart';
 import '../core/api_service.dart';
 import '../http_error.dart';
+import '../post_creation/create_module_post.dart';
 
 class CreateApplicationPage extends StatefulWidget {
   final ApplicationViewModel vm;
   final ApiService api;
+  final AuthMetaUser user;
+  final List<ModulePrincipalRes> modules;
 
-  const CreateApplicationPage({Key? key, required this.vm, required this.api})
+  const CreateApplicationPage(
+      {Key? key,
+      required this.vm,
+      required this.api,
+      required this.user,
+      required this.modules})
       : super(key: key);
 
   @override
@@ -23,216 +33,148 @@ class CreateApplicationPage extends StatefulWidget {
 }
 
 class _CreateModulePost extends State<CreateApplicationPage> {
-  IndexRes? _selected;
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: true);
+
+  bool networkError = false;
   HttpResponseError? createErr;
-  List<IndexRes> offers = [];
-  bool isLoading = false;
+  List<int> isLoading = [];
+  List<PostPrincipalResp> posts = [];
 
-  busy() => setState(() => isLoading = true);
-
-  free() => setState(() => isLoading = false);
-
-  _create(context) async {
-    if (offers.isEmpty) return;
-    busy();
-    var r = await widget.api.access.applicationPostIdPost(
-        postId: widget.vm.post.post?.id ?? "",
-        body: CreateApplicationReq(
-          offerId: offers.map((e) => e.principal!.id!).toList(),
-        ));
+  Future<void> _refresh() async {
+    var r = await widget.api.access.postGet(
+      completed: false,
+      posterId: widget.user.data?.guid ?? "non-id",
+      moduleId: widget.vm.post.post?.module?.id ?? "non-id",
+    );
     var result = r.toResult();
     if (result.isSuccess) {
-      setError(null);
-      free();
-      Navigator.pop(context);
+      networkNoErr();
+      var d = result.value;
+      setState(() {
+        posts = d;
+      });
     } else {
-      setError(result.error);
-      free();
+      networkErr();
+      logger.e(result.error);
     }
+  }
+
+  networkErr() => setState(() => networkError = true);
+
+  networkNoErr() => setState(() => networkError = false);
+
+  busy() => setState(() => isLoading.add(0));
+
+  free() => setState(() => isLoading.removeLast());
+
+  Future<void> Function(String?) _create(BuildContext context) {
+    return (String? offerId) async {
+      busy();
+      var r = await widget.api.access.applicationPostIdAppIdPost(
+          postId: widget.vm.post.post?.id ?? "", appId: offerId ?? "");
+      var result = r.toResult();
+      if (result.isSuccess) {
+        setError(null);
+        free();
+        Navigator.pop(context);
+      } else {
+        setError(result.error);
+        free();
+      }
+    };
   }
 
   setError(HttpResponseError? err) {
     setState(() => createErr = err);
   }
 
-  _removeOffer(String id) {
-    var removed =
-        offers.where((element) => element.principal?.id != id).toList();
-    setState(() => offers = removed);
-  }
-
-  Future<List<IndexRes>> _search(String? filter) {
-    var f = filter ?? "";
-    var offerIds = offers.map((e) => e.principal?.id ?? "non-id");
-    return Future.value(widget.vm.indexes
-        .where((e) =>
-            f.lowerCompare(e.principal?.code) ||
-            (e.principal?.props
-                    ?.any((element) => f.lowerCompare(element.day)) ??
-                false))
-        .where((e) => !offerIds.contains(e.principal?.id))
-        .where((e) =>
-            e.principal?.id != (widget.vm.post.post?.index?.id ?? "non-id"))
-        .toList());
-  }
-
   @override
   Widget build(BuildContext context) {
     var t = Theme.of(context);
     var cs = t.colorScheme;
+    var box20 = const SizedBox(height: 20);
     var errWidget = createErr == null
-        ? const SizedBox(height: 20)
+        ? box20
         : Container(
             padding: const EdgeInsets.all(24), child: ErrorDisplay(createErr!));
     var loadAnim = const AnimationPage(
         asset: LottieAnimations.register, text: "Applying...");
+    var errAnim = ListView(
+      children: const [
+        AnimationFrame(
+            asset: LottieAnimations.coffee, text: "Error - coffee spilled"),
+      ],
+    );
+
     var p = widget.vm.post.post;
-    var page = Scaffold(
-        appBar: AppBar(
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: const Icon(Icons.arrow_back),
-          ),
-          title: Text(
-              "Apply to ${widget.vm.post.post?.module?.courseCode ?? ''} - ${widget.vm.post.post?.index?.code ?? ''}"),
-        ),
-        body: Column(children: [
-          errWidget,
-          ...?p?.index?.props?.map((e) => IndexRowView(prop: e)),
-          const Divider(
-            height: 12,
-            thickness: 1,
-            indent: 0,
-            endIndent: 0,
-          ),
-          ListTile(
-            title: Text(
-              "Looking For",
-              style: t.textTheme.overline,
-            ),
-            subtitle: Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: (p?.lookingFor?.map((e) => Chip(
-                            backgroundColor: cs.primary,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 8),
-                            shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(10),
-                                    bottomRight: Radius.circular(10))),
-                            label: Text(
-                              e.code ?? "Unknown Index",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: cs.onPrimary),
-                            ))) ??
-                        [])
-                    .toList(),
-              ),
-            ),
-          ),
-          const Divider(
-            height: 12,
-            thickness: 1,
-            indent: 0,
-            endIndent: 0,
-          ),
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: DropdownSearch<IndexRes>(
-                    popupItemBuilder: indexBuilder,
-                    dropdownSearchDecoration:
-                        const InputDecoration(labelText: 'Offers'),
-                    showSearchBox: true,
-                    showClearButton: true,
-                    mode: Mode.BOTTOM_SHEET,
-                    onFind: _search,
-                    itemAsString: (IndexRes? u) => u?.principal?.code ?? "",
-                    onChanged: (IndexRes? data) {
-                      setState(() => _selected = data);
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Ink(
-                  decoration: ShapeDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    shape: const CircleBorder(),
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      if (_selected != null && !offers.contains(_selected)) {
-                        setState(() {
-                          offers = [...offers, _selected!];
-                        });
-                      }
-                      setState(() {
-                        _selected = null;
-                      });
-                    },
-                    icon: const Icon(Icons.add),
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                )
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(24),
-            child: Wrap(
-              alignment: WrapAlignment.spaceAround,
-              spacing: 24,
-              runSpacing: 8,
-              children: offers
-                  .map((x) => InkWell(
-                      onTap: () => _removeOffer(x.principal?.id ?? "non-id"),
-                      child: Chip(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
-                          padding: const EdgeInsets.all(12),
-                          label: Text(
-                            x.principal?.code ?? "",
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary),
-                          ))))
-                  .toList(),
-            ),
-          ),
-          const SizedBox(height: 40),
-          ButtonBar(
-            buttonHeight: 100,
+    var offers = p?.lookingFor ?? <IndexPrincipalRes>[];
+
+    var postList = posts.isEmpty
+        ? ListView(
             children: [
-              OutlinedButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("back"),
-                style: ElevatedButton.styleFrom(
-                  shape: BeveledRectangleBorder(
-                      borderRadius: BorderRadius.circular(9.0)),
-                  minimumSize: const Size(120, 56),
-                  elevation: 0,
-                ),
-              ),
-              ElevatedButton(
-                onPressed: offers.isNotEmpty ? () => _create(context) : null,
-                child: const Text("apply"),
-                style: ElevatedButton.styleFrom(
-                  shape: BeveledRectangleBorder(
-                      borderRadius: BorderRadius.circular(9.0)),
-                  minimumSize: const Size(120, 56),
-                ),
-              ),
+              AnimationFrame(
+                  asset: LottieAnimations.emptybox,
+                  text: "You don't have any post for ${p?.module?.courseCode}!")
             ],
           )
-        ]));
-    return isLoading ? loadAnim : page;
+        : ListView(
+            padding: const EdgeInsets.all(8),
+            children: posts
+                .map((post) => SinglePostWidget(
+                      create: _create(context),
+                      have: p!.index!,
+                      post: post,
+                      lookingFor: offers,
+                    ))
+                .toList(),
+          );
+
+    var pageContent = Column(children: [
+      errWidget,
+      CreateApplicationHeader(p: p),
+      Text("Trade With (your existing posts)", style: t.textTheme.overline),
+      Expanded(
+        child: SmartRefresher(
+          child: networkError ? errAnim : postList,
+          enablePullDown: true,
+          enablePullUp: false,
+          onRefresh: () async {
+            await _refresh();
+            _refreshController.refreshCompleted();
+          },
+          controller: _refreshController,
+        ),
+      )
+    ]);
+    var page = Scaffold(
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(Icons.arrow_back),
+        ),
+        title: Text(
+            "Trade with ${widget.vm.post.post?.module?.courseCode ?? ''} - ${widget.vm.post.post?.index?.code ?? ''}"),
+      ),
+      body: pageContent,
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (ctx) => CreateModulePost(
+                        initOffers: [widget.vm.post.post!.index!.id!],
+                        initModule: widget.vm.post.post?.module,
+                        api: widget.api,
+                        modules: widget.modules,
+                      ))).then((value) async => await _refresh());
+        },
+      ),
+    );
+
+    return isLoading.isNotEmpty ? loadAnim : page;
   }
 }

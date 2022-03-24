@@ -114,27 +114,34 @@ class _ModuleState extends State<StatefulHomeShell> {
             moduleList: widget.moduleList);
         break;
       case BottomTabs.applications:
-        var my = ApplicationLoader(
+        var rejected = ApplicationLoader(
             logout: widget.logout,
-            loadType: AppLoadType.My,
+            loadType: AppLoadType.rejected,
+            api: widget.api,
+            user: widget.user,
+            controller: _controller);
+        var applied = ApplicationLoader(
+            logout: widget.logout,
+            loadType: AppLoadType.applied,
             api: widget.api,
             user: widget.user,
             controller: _controller);
         var offer = ApplicationLoader(
             logout: widget.logout,
-            loadType: AppLoadType.Offer,
+            loadType: AppLoadType.offer,
             api: widget.api,
             user: widget.user,
             controller: _controller);
         var done = ApplicationLoader(
             logout: widget.logout,
-            loadType: AppLoadType.Done,
+            loadType: AppLoadType.done,
             api: widget.api,
             user: widget.user,
             controller: _controller);
         page = TabBarView(
           children: [
-            my,
+            rejected,
+            applied,
             offer,
             done,
           ],
@@ -143,13 +150,14 @@ class _ModuleState extends State<StatefulHomeShell> {
     }
     var tabBar = btmTab == BottomTabs.applications
         ? const TabBar(tabs: [
+            Tab(icon: Icon(Icons.thumb_down_alt), text: "Rejected"),
             Tab(icon: Icon(Icons.approval), text: "Applied"),
             Tab(icon: Icon(Icons.local_offer), text: "Offers"),
             Tab(icon: Icon(Icons.task_alt), text: "Completed"),
           ])
         : null;
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           leading: GestureDetector(

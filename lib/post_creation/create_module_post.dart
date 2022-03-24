@@ -11,8 +11,15 @@ import '../http_error.dart';
 class CreateModulePost extends StatefulWidget {
   final List<ModulePrincipalRes> modules;
   final ApiService api;
+  final ModulePrincipalRes? initModule;
+  final List<String>? initOffers;
 
-  const CreateModulePost({Key? key, required this.modules, required this.api})
+  const CreateModulePost(
+      {Key? key,
+      required this.modules,
+      required this.api,
+      this.initModule,
+      this.initOffers})
       : super(key: key);
 
   @override
@@ -22,6 +29,12 @@ class CreateModulePost extends StatefulWidget {
 class _CreateModulePost extends State<CreateModulePost> {
   ModulePrincipalRes? _selected;
   HttpResponseError? createErr;
+
+  @override
+  initState() {
+    _selected = widget.initModule;
+    super.initState();
+  }
 
   Future<List<ModulePrincipalRes>> search(String? filter) {
     var f = filter ?? "";
@@ -42,11 +55,14 @@ class _CreateModulePost extends State<CreateModulePost> {
     var errWidget = createErr == null
         ? const SizedBox(height: 20)
         : Container(
-        padding: const EdgeInsets.all(24), child: ErrorDisplay(createErr!));
+            padding: const EdgeInsets.all(24), child: ErrorDisplay(createErr!));
     var indexChoice = _selected == null
         ? const SizedBox(height: 20)
         : CreatePostLoader(
-        module: _selected!, api: widget.api, setErr: setError);
+            offersInit: widget.initOffers,
+            module: _selected!,
+            api: widget.api,
+            setErr: setError);
     return Scaffold(
         appBar: AppBar(
           leading: GestureDetector(
@@ -63,9 +79,9 @@ class _CreateModulePost extends State<CreateModulePost> {
             padding: const EdgeInsets.all(12),
             child: DropdownSearch<ModulePrincipalRes>(
               dropdownSearchDecoration:
-              const InputDecoration(labelText: 'Module'),
-
-              popupItemBuilder: (BuildContext context, ModulePrincipalRes? p, bool selected) {
+                  const InputDecoration(labelText: 'Module'),
+              popupItemBuilder:
+                  (BuildContext context, ModulePrincipalRes? p, bool selected) {
                 return ListTile(
                   leading: const Icon(Icons.description),
                   title: Text(
@@ -89,11 +105,12 @@ class _CreateModulePost extends State<CreateModulePost> {
               mode: Mode.BOTTOM_SHEET,
               onFind: search,
               itemAsString: (ModulePrincipalRes? u) =>
-              "${u?.courseCode}: ${u?.name}",
+                  "${u?.courseCode}: ${u?.name}",
               onChanged: (ModulePrincipalRes? data) {
                 setState(() => _selected = null);
                 setState(() => _selected = data);
               },
+              selectedItem: _selected,
             ),
           ),
           indexChoice
