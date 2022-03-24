@@ -7,10 +7,12 @@ import 'package:flutter/material.dart';
 import 'api_lib/swagger.swagger.dart';
 import 'bar_buttons.dart';
 import 'core/api_service.dart';
+import 'dynamic_theme/theme_widget_setting.dart';
 
 class BottomTabs {
   static const String module = "Modules";
   static const String applications = "Applications";
+  static const String settings = "Settings";
 }
 
 class TopTabs {
@@ -147,6 +149,8 @@ class _ModuleState extends State<StatefulHomeShell> {
           ],
         );
         break;
+      case BottomTabs.settings:
+        page = const ThemeSetting();
     }
     var tabBar = btmTab == BottomTabs.applications
         ? const TabBar(tabs: [
@@ -204,6 +208,17 @@ class _ModuleState extends State<StatefulHomeShell> {
                   icon: Icons.search,
                   onPressed: () => _switchBottomTabs(BottomTabs.module),
                   text: 'Search',
+                ),
+                BottomBarButton(
+                  icon: Icons.list,
+                  onPressed: () => _switchBottomTabs(BottomTabs.applications),
+                  text: 'Applications',
+                ),
+                const SizedBox(width: 16),
+                BottomBarButton(
+                  icon: Icons.settings,
+                  onPressed: () => _switchBottomTabs(BottomTabs.settings),
+                  text: 'Settings',
                 ),
                 BottomBarButton(
                   icon: Icons.list,

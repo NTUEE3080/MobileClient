@@ -1,25 +1,21 @@
-import 'dart:convert';
-
 import 'package:coursecupid/auth/frame.dart';
 import 'package:coursecupid/core/animation.dart';
 import 'package:coursecupid/core/api_service.dart';
+import 'package:coursecupid/dynamic_theme/themes.dart';
+import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:json_theme/json_theme.dart';
 
 import './home.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final themeStr = await rootBundle.loadString('assets/theme_main.json');
-  final themeJson = jsonDecode(themeStr);
-  final theme = ThemeDecoder.decodeThemeData(themeJson)!;
-  runApp(CourseCupidApp(theme: theme));
+  var themes = await generateTheme();
+  runApp(CourseCupidApp(theme: themes));
 }
 
 class CourseCupidApp extends StatelessWidget {
   const CourseCupidApp({Key? key, required this.theme}) : super(key: key);
-  final ThemeData theme;
+  final ThemeCollection theme;
 
   @override
   Widget build(BuildContext context) {
@@ -28,23 +24,30 @@ class CourseCupidApp extends StatelessWidget {
     const lAim =
         AnimationPage(asset: LottieAnimations.loading, text: "Loading...");
 
-    return AuthFrame(
-        theme: theme,
-        child: (login, logout, user, error) => FutureBuilder<ApiService>(
-            future: ApiService.fromPlatform(),
-            builder: (context, val) {
-              if (val.connectionState == ConnectionState.done) {
-                if (val.hasData) {
-                  return HomeWidget(
-                    user: user,
-                    title: "Home",
-                    logout: logout,
-                    api: val.data!,
-                  );
+    return DynamicTheme(
+      themeCollection: theme,
+      defaultThemeId: AppThemes.Default,
+      builder: (context, theme) {
+        return AuthFrame(
+          theme: theme,
+          child: (login, logout, user, error) => FutureBuilder<ApiService>(
+              future: ApiService.fromPlatform(),
+              builder: (context, val) {
+                if (val.connectionState == ConnectionState.done) {
+                  if (val.hasData) {
+                    return HomeWidget(
+                      user: user,
+                      title: "Home",
+                      logout: logout,
+                      api: val.data!,
+                    );
+                  }
+                  return eAim;
                 }
-                return eAim;
-              }
-              return lAim;
-            }));
+                return lAim;
+              }),
+        );
+      },
+    );
   }
 }
