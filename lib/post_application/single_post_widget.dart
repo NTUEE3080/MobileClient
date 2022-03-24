@@ -43,6 +43,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             label: const Text("Offer to Trade")),
       ],
     );
+    var tradable = widget.post.index?.code != widget.post.index?.code;
     var expanded = Column(
       children: [
         Row(
@@ -80,9 +81,11 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
           child: ButtonBar(
             children: [
               ElevatedButton.icon(
-                  onPressed: () {
-                    widget.create(widget.post.id);
-                  },
+                  onPressed: tradable
+                      ? () {
+                          widget.create(widget.post.id);
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
                       textStyle: t.textTheme.bodyMedium,
                       minimumSize: const Size(100, 48)),

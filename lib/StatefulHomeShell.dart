@@ -60,7 +60,8 @@ class _ModuleState extends State<StatefulHomeShell> {
           width: double.infinity,
           height: 40,
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(5)),
+              color: Theme.of(context).backgroundColor,
+              borderRadius: BorderRadius.circular(5)),
           child: Center(
             child: TextField(
               controller: _controller,
@@ -150,7 +151,9 @@ class _ModuleState extends State<StatefulHomeShell> {
         );
         break;
       case BottomTabs.settings:
-        page = const ThemeSetting();
+        page = ThemeSetting(
+          controller: _controller,
+        );
     }
     var tabBar = btmTab == BottomTabs.applications
         ? const TabBar(tabs: [

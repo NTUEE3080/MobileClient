@@ -1,9 +1,65 @@
+import 'package:coursecupid/core/resp_ext.dart';
 import 'package:coursecupid/dynamic_theme/themes.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 
-class ThemeSetting extends StatelessWidget {
-  const ThemeSetting({Key? key}) : super(key: key);
+class ThemeInfo {
+  final String name;
+  final Color color;
+  final int id;
+
+  ThemeInfo(this.name, this.color, this.id);
+}
+
+class ThemeSetting extends StatefulWidget {
+  final TextEditingController controller;
+
+  const ThemeSetting({Key? key, required this.controller}) : super(key: key);
+
+  @override
+  State<ThemeSetting> createState() => _ThemeSettingState();
+}
+
+class _ThemeSettingState extends State<ThemeSetting> {
+  List<ThemeInfo> fullList = [
+    ThemeInfo(
+        "Cupid", const Color.fromRGBO(0xef, 0x9a, 0x9a, 1), AppThemes.Default),
+    ThemeInfo("Dark Forest", const Color.fromRGBO(0x10, 0x57, 0x4f, 1),
+        AppThemes.DarkForest),
+    ThemeInfo(
+        "Dark", const Color.fromRGBO(0x12, 0x12, 0x12, 1), AppThemes.Dark),
+  ];
+  List<ThemeInfo> filteredList = [];
+  String _searchTerm = "";
+
+  _searchListener() {
+    if (widget.controller.text.isEmpty) {
+      setState(() {
+        _searchTerm = "";
+        filteredList = List.from(fullList);
+      });
+    } else {
+      setState(() {
+        _searchTerm = widget.controller.text;
+        filteredList =
+            fullList.where((x) => _searchTerm.lowerCompare(x.name)).toList();
+      });
+    }
+  }
+
+  @override
+  didUpdateWidget(Widget oldWidget) {
+    filteredList = fullList;
+    widget.controller.addListener(_searchListener);
+    super.didUpdateWidget(oldWidget as ThemeSetting);
+  }
+
+  @override
+  void initState() {
+    filteredList = fullList;
+    widget.controller.addListener(_searchListener);
+    super.initState();
+  }
 
   generateOnTap(BuildContext context, int target) {
     return () {
@@ -16,26 +72,15 @@ class ThemeSetting extends StatelessWidget {
     var t = DynamicTheme.of(context)!;
     var current = t.themeId;
 
-    return GridView.count(crossAxisCount: 3, children: [
-      ThemeButton(
-        color: const Color.fromRGBO(0xef, 0x9a, 0x9a, 1),
-        onTap: generateOnTap(context, AppThemes.Default),
-        name: "Cupid",
-        selected: AppThemes.Default == current,
-      ),
-      ThemeButton(
-        color: const Color.fromRGBO(0x10, 0x57, 0x4f, 1),
-        onTap: generateOnTap(context, AppThemes.DarkForest),
-        name: "Dark forest",
-        selected: AppThemes.DarkForest == current,
-      ),
-      ThemeButton(
-        color: const Color.fromRGBO(0x12, 0x12, 0x12, 1),
-        onTap: generateOnTap(context, AppThemes.Dark),
-        name: "Dark",
-        selected: AppThemes.Dark == current,
-      )
-    ]);
+    return GridView.count(
+        crossAxisCount: 3,
+        children: filteredList
+            .map((e) => ThemeButton(
+                onTap: generateOnTap(context, e.id),
+                selected: current == e.id,
+                color: e.color,
+                name: e.name))
+            .toList());
   }
 }
 
@@ -49,8 +94,8 @@ class ThemeButton extends StatelessWidget {
       {Key? key,
       required this.onTap,
       required this.selected,
-      required this.color,
-      required this.name})
+    required this.color,
+    required this.name})
       : super(key: key);
 
   @override

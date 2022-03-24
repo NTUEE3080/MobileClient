@@ -284,7 +284,9 @@ class _CreatePostState extends State<CreatePost> {
               ),
             ),
             ElevatedButton(
-              onPressed: _haveSelected != null && offers.isNotEmpty
+              onPressed: _haveSelected != null &&
+                      offers.isNotEmpty &&
+                      !offers.contains(_haveSelected)
                   ? () => _create(context)
                   : null,
               child: const Text("create"),

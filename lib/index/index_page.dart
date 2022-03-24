@@ -78,7 +78,8 @@ class _ModuleState extends State<IndexPage> {
     super.initState();
   }
 
-  void _searchPressed() {
+  void _searchPressed(BuildContext context) {
+    var t = Theme.of(context);
     setState(() {
       if (_searchIcon.icon == Icons.search) {
         _searchIcon = const Icon(Icons.close);
@@ -86,7 +87,7 @@ class _ModuleState extends State<IndexPage> {
           width: double.infinity,
           height: 40,
           decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(5)),
+              color: t.backgroundColor, borderRadius: BorderRadius.circular(5)),
           child: Center(
             child: TextField(
               controller: _controller,
@@ -137,7 +138,7 @@ class _ModuleState extends State<IndexPage> {
             Expanded(
               child: GestureDetector(
                 onTap: () {
-                  _searchPressed();
+                  _searchPressed(context);
                 },
                 child: _searchIcon,
               ),
