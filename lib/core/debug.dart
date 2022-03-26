@@ -13,6 +13,12 @@ class DebugWidget extends StatelessWidget {
       home: Scaffold(
           appBar: AppBar(
             title: const Text('Debug Info'),
+            leading: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: const Icon(Icons.arrow_back),
+            ),
           ),
           body: Center(
               child: Column(children: [
@@ -35,7 +41,7 @@ class DebugWidget extends StatelessWidget {
                     Column(children: [Text(config.buildNumber)]),
                   ]),
                   TableRow(children: [
-                    Column(children: const [Text("Version")]),
+                    Column(children: const [Text("Verson")]),
                     Column(children: [Text(config.version)]),
                   ]),
                   TableRow(children: [
@@ -90,10 +96,10 @@ class DebugScreen extends StatelessWidget {
     const lAnim =
         AnimationPage(asset: LottieAnimations.loading, text: "Loading...");
     const eAnim = AnimationPage(
-        asset: LottieAnimations.dogSwimming, text: "Error - Doggie can't swim");
+        asset: LottieAnimations.puzzle, text: "Error - Puzzle Don't Fit");
 
     return FutureBuilder<AppConfiguration>(
-      future: AppConfiguration.fromPlatform(),
+      future: AppConfiguration.fromPlatformErrorless(),
       builder: (context, val) {
         if (val.connectionState == ConnectionState.done) {
           if (val.hasData) {

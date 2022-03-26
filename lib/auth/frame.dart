@@ -1,5 +1,7 @@
 import 'package:coursecupid/auth/initial.dart';
 import 'package:coursecupid/core/animation.dart';
+import 'package:coursecupid/core/err_animation.dart';
+import 'package:coursecupid/core/err_expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
@@ -34,6 +36,8 @@ class _AuthFrameState extends State<AuthFrame> {
   bool isBusy = false;
   bool isFatal = false;
   String errorMessage = '';
+  Exception? ex;
+  StackTrace? st;
   AuthMetaUser user = AuthMetaUser(false, false, false, false, null, null);
 
   @override
@@ -47,7 +51,11 @@ class _AuthFrameState extends State<AuthFrame> {
 
   setFree() => setState(() => isBusy = false);
 
-  setFatal() => setState(() => isFatal = true);
+  setFatal(Exception e, StackTrace trace){
+    setState(() => isFatal = true);
+    setState(() => ex = e);
+    setState(() => st = trace);
+  }
 
   updateError(String error) => setState(() => errorMessage = error);
 
@@ -63,9 +71,9 @@ class _AuthFrameState extends State<AuthFrame> {
       logger.i("complete refresh session");
       updateUser(user);
       setFree();
-    } on Exception catch (e) {
+    } on Exception catch (e, st) {
       logger.e("Catch exception", e);
-      setFatal();
+      setFatal(e, st);
     }
   }
 
@@ -81,9 +89,9 @@ class _AuthFrameState extends State<AuthFrame> {
           },
           onError: (e) => updateError(e.title));
       setFree();
-    } on Exception catch (e) {
+    } on Exception catch (e, st) {
       logger.e("Catch exception", e);
-      setFatal();
+      setFatal(e, st);
     }
   }
 
@@ -95,9 +103,9 @@ class _AuthFrameState extends State<AuthFrame> {
       updateUser(r);
       updateError("");
       setFree();
-    } on Exception catch (e) {
+    } on Exception catch (e, trace) {
       logger.e("Catch exception", e);
-      setFatal();
+      setFatal(e, trace);
     }
   }
 
@@ -120,7 +128,9 @@ class _AuthFrameState extends State<AuthFrame> {
     return MaterialApp(
       title: 'Course Cupid',
       home: isFatal
-          ? const AnimationPage(
+          ? ExceptionAnimationPage(
+              e: ex,
+              st: st,
               asset: LottieAnimations.dogSwimming,
               text: "Error - Doggie can't swim")
           : nonError,

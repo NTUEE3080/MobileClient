@@ -47,6 +47,7 @@ class AppConfiguration {
   final String? apiPort;
 
   static AppConfiguration? _fromPlatform;
+  static AppConfiguration? _fromPlatformErrorless;
 
   AppConfiguration(
       this.authDomain,
@@ -65,6 +66,44 @@ class AppConfiguration {
       this.apiScheme,
       this.apiPort,
       this.buildSignature);
+
+  static Future<AppConfiguration> fromPlatformErrorless() async {
+    if (_fromPlatformErrorless != null) {
+      return _fromPlatformErrorless!;
+    }
+    final packageInfo = await PackageInfo.fromPlatform();
+    final raw = _RawEnvironment();
+    final authDomain = raw.authDomain ?? "";
+    final authClientId = raw.authClientId ?? "";
+    final authAud = raw.authAudience ?? "";
+    final apiDomain = raw.apiDomain ?? "";
+    final scheme = raw.apiScheme ?? "https";
+    final gitBranch = raw.gitBranch ?? "Unknown Branch";
+    final gitSha = raw.gitSha ?? "Unknown SHA";
+    final port = raw.apiPort == null ? "" : ":${raw.apiPort}";
+    final apiUrl = "$scheme://$apiDomain$port";
+
+    final config = AppConfiguration(
+      authDomain,
+      authClientId,
+      "https://$authAud",
+      packageInfo.appName,
+      packageInfo.packageName,
+      packageInfo.version,
+      packageInfo.buildNumber,
+      "${packageInfo.packageName}://login-callback",
+      "https://$authDomain}",
+      gitBranch,
+      gitSha,
+      apiUrl,
+      apiDomain,
+      raw.apiScheme,
+      raw.apiPort,
+      packageInfo.buildSignature,
+    );
+    _fromPlatformErrorless = config;
+    return config;
+  }
 
   static Future<AppConfiguration> fromPlatform() async {
     if (_fromPlatform != null) {

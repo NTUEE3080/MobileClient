@@ -1,4 +1,4 @@
-package com.ee3080.coursecupid
+package com.eee3080.coursecupid
 
 import io.flutter.embedding.android.FlutterActivity
 

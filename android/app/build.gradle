@@ -38,7 +38,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
-def appId = "com.ee3080.coursecupid"
+def appId = "com.eee3080.coursecupid"
 
 android {
     compileSdkVersion flutter.compileSdkVersion
