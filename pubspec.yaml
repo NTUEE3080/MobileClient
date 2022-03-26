@@ -44,6 +44,7 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
   assets:
+    - assets/theme/stary_night.json
     - assets/theme/dark_forest.json
     - assets/theme_main.json
     - assets/register.json

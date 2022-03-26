@@ -82,16 +82,6 @@ class _ModuleState extends State<StatefulHomeShell> {
     });
   }
 
-  _switchTopTabs(String t) {
-    setState(() {
-      appBarTitle = Text(t);
-      _searchIcon = const Icon(Icons.search);
-      _controller.clear();
-    });
-    setState(() => _controller = TextEditingController());
-    setState(() => btmTab = t);
-  }
-
   _switchBottomTabs(String t) {
     setState(() {
       appBarTitle = Text(t);
@@ -104,8 +94,6 @@ class _ModuleState extends State<StatefulHomeShell> {
 
   @override
   Widget build(BuildContext context) {
-    var t = Theme.of(context);
-    var cs = t.colorScheme;
     late Widget page;
     switch (btmTab) {
       case BottomTabs.module:
@@ -141,12 +129,14 @@ class _ModuleState extends State<StatefulHomeShell> {
             api: widget.api,
             user: widget.user,
             controller: _controller);
+        var suggestions = const Text("hello");
         page = TabBarView(
           children: [
             rejected,
             applied,
             offer,
             done,
+            suggestions,
           ],
         );
         break;
@@ -156,15 +146,16 @@ class _ModuleState extends State<StatefulHomeShell> {
         );
     }
     var tabBar = btmTab == BottomTabs.applications
-        ? const TabBar(tabs: [
+        ? const TabBar(isScrollable: true, tabs: [
             Tab(icon: Icon(Icons.thumb_down_alt), text: "Rejected"),
             Tab(icon: Icon(Icons.approval), text: "Applied"),
             Tab(icon: Icon(Icons.local_offer), text: "Offers"),
             Tab(icon: Icon(Icons.task_alt), text: "Completed"),
+            Tab(icon: Icon(Icons.lightbulb), text: "Suggestions"),
           ])
         : null;
     return DefaultTabController(
-      length: 4,
+      length: 5,
       child: Scaffold(
         appBar: AppBar(
           leading: GestureDetector(

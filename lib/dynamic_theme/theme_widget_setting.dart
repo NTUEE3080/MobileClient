@@ -26,6 +26,8 @@ class _ThemeSettingState extends State<ThemeSetting> {
         "Cupid", const Color.fromRGBO(0xef, 0x9a, 0x9a, 1), AppThemes.Default),
     ThemeInfo("Dark Forest", const Color.fromRGBO(0x10, 0x57, 0x4f, 1),
         AppThemes.DarkForest),
+    ThemeInfo("Starry Night", const Color.fromRGBO(0x0F, 0x0F, 0x0F, 1),
+        AppThemes.StarryNight),
     ThemeInfo(
         "Dark", const Color.fromRGBO(0x12, 0x12, 0x12, 1), AppThemes.Dark),
   ];
