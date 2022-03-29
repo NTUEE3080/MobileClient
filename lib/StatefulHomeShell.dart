@@ -51,6 +51,7 @@ class _ModuleState extends State<StatefulHomeShell> {
   TextEditingController _controller = TextEditingController();
   String btmTab = BottomTabs.module;
   Widget appBarTitle = const Text(BottomTabs.module);
+  int tabSize = 5;
 
   void _searchPressed(context) {
     setState(() {
@@ -155,7 +156,7 @@ class _ModuleState extends State<StatefulHomeShell> {
           ])
         : null;
     return DefaultTabController(
-      length: 5,
+      length: tabSize,
       child: Scaffold(
         appBar: AppBar(
           leading: GestureDetector(

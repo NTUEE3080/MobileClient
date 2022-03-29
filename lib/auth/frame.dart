@@ -1,7 +1,6 @@
 import 'package:coursecupid/auth/initial.dart';
 import 'package:coursecupid/core/animation.dart';
 import 'package:coursecupid/core/err_animation.dart';
-import 'package:coursecupid/core/err_expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
@@ -126,6 +125,7 @@ class _AuthFrameState extends State<AuthFrame> {
       busy: isBusy,
     );
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Course Cupid',
       home: isFatal
           ? ExceptionAnimationPage(

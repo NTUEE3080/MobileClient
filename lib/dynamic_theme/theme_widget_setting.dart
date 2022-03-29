@@ -2,6 +2,9 @@ import 'package:coursecupid/core/resp_ext.dart';
 import 'package:coursecupid/dynamic_theme/themes.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../my_application/contact_widget.dart';
 
 class ThemeInfo {
   final String name;
@@ -69,20 +72,46 @@ class _ThemeSettingState extends State<ThemeSetting> {
     };
   }
 
+  Widget deleteAccount(BuildContext context) {
+    return ButtonBar(
+      children: [
+        ElevatedButton(
+            onPressed: () {
+              final Uri emailLaunchUri = Uri(
+                scheme: 'mailto',
+                path: "kirinnee97@gmail.com",
+                query: encodeQueryParameters(<String, String>{
+                  'subject': 'Example Subject & Symbols are allowed!'
+                }),
+              );
+              launch(emailLaunchUri.toString());
+            },
+            child: const Text("Request to Remove Account"))
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var t = DynamicTheme.of(context)!;
     var current = t.themeId;
 
-    return GridView.count(
-        crossAxisCount: 3,
-        children: filteredList
-            .map((e) => ThemeButton(
-                onTap: generateOnTap(context, e.id),
-                selected: current == e.id,
-                color: e.color,
-                name: e.name))
-            .toList());
+    return Column(
+      children: [
+        Expanded(
+          child: GridView.count(
+              crossAxisCount: 3,
+              children: filteredList
+                  .map((e) => ThemeButton(
+                      onTap: generateOnTap(context, e.id),
+                      selected: current == e.id,
+                      color: e.color,
+                      name: e.name))
+                  .toList()),
+        ),
+        deleteAccount(context),
+      ],
+    );
   }
 }
 
@@ -96,8 +125,8 @@ class ThemeButton extends StatelessWidget {
       {Key? key,
       required this.onTap,
       required this.selected,
-    required this.color,
-    required this.name})
+      required this.color,
+      required this.name})
       : super(key: key);
 
   @override

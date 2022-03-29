@@ -9,7 +9,7 @@ if (localPropertiesFile.exists()) {
 def dartEnvironmentVariables = [
         COURSECUPID_APP_SUFFIX: null,
         COURSECUPID_APP_NAME: null
-];
+]
 if (project.hasProperty('dart-defines')) {
     dartEnvironmentVariables = dartEnvironmentVariables + project.property('dart-defines')
     .split(',')
@@ -40,6 +40,12 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 def appId = "com.eee3080.coursecupid"
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     compileSdkVersion flutter.compileSdkVersion
 
@@ -69,10 +75,17 @@ android {
         ]
     }
 
-    buildTypes {
-
+    signingConfigs {
         release {
-            signingConfig signingConfigs.debug
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
         }
     }
 }

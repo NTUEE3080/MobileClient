@@ -35,7 +35,7 @@ class CourseCupidApp extends StatelessWidget {
               builder: (context, val) {
                 if (val.connectionState == ConnectionState.done) {
                   if (val.hasData) {
-                    return HomeWidget(
+                      return HomeWidget(
                       user: user,
                       title: "Home",
                       logout: logout,
