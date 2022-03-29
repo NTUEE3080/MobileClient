@@ -34,17 +34,17 @@ workflows:
         echo "flutter.sdk=$HOME/programs/flutter" > "$FCI_BUILD_DIR/android/local.properties"
       - flutter packages pub get
       - flutter config --enable-web
-      - flutter build appbundle --release --dart-define=AUTH_AUDIENCE=pitapair.dev "--dart-define=COURSECUPID_APP_NAME=CourseCupid - DEV" --dart-define=AUTH_DOMAIN=pitapair.jp.auth0.com --dart-define=AUTH_CLIENT_ID=vVAk30MNhFE2QkNAKjIb11G 1RkVhtUvp --dart-define=COURSECUPID_APP_SUFFIX=.dev --dart-define=API_DOMAIN=dev.core.ee3080.cyanprint.dev
+      - flutter build appbundle --release --dart-define=AUTH_AUDIENCE=pitapair.dev "--dart-define=COURSECUPID_APP_NAME=CourseCupid - DEV" --dart-define=AUTH_DOMAIN=pitapair.jp.auth0.com --dart-define=AUTH_CLIENT_ID=vVAk30MNhFE2QkNAKjIb11G1RkVhtUvp --dart-define=COURSECUPID_APP_SUFFIX=.dev --dart-define=API_DOMAIN=dev.core.ee3080.cyanprint.dev
       - find . -name "Podfile" -execdir pod install \;
       - keychain initialize
       - app-store-connect fetch-signing-files "com.eee3080.coursecupid.dev" --type
         IOS_APP_STORE --create
       - keychain add-certificates
       - xcode-project use-profiles
-      - flutter build ipa --export-options-plist=~/export_options.plist --dart-define=AUTH_AUDIENCE=pitapair.dev "--dart-define=COURSECUPID_APP_NAME=CourseCupid - DEV" --dart-define=AUTH_DOMAIN=pitapair.jp.auth0.com --dart-define=AUTH_CLIENT_ID=vVAk30MNhFE2QkNAKjIb11G 1RkVhtUvp --dart-define=COURSECUPID_APP_SUFFIX=.dev --dart-define=API_DOMAIN=dev.core.ee3080.cyanprint.dev
+      - flutter build ipa --export-options-plist=~/export_options.plist --dart-define=AUTH_AUDIENCE=pitapair.dev "--dart-define=COURSECUPID_APP_NAME=CourseCupid - DEV" --dart-define=AUTH_DOMAIN=pitapair.jp.auth0.com --dart-define=AUTH_CLIENT_ID=vVAk30MNhFE2QkNAKjIb11G1RkVhtUvp --dart-define=COURSECUPID_APP_SUFFIX=.dev --dart-define=API_DOMAIN=dev.core.ee3080.cyanprint.dev
       - |
         # build web
-        flutter build web --release --dart-define=AUTH_AUDIENCE=pitapair.dev "--dart-define=COURSECUPID_APP_NAME=CourseCupid - DEV" --dart-define=AUTH_DOMAIN=pitapair.jp.auth0.com --dart-define=AUTH_CLIENT_ID=vVAk30MNhFE2QkNAKjIb11G 1RkVhtUvp --dart-define=COURSECUPID_APP_SUFFIX=.dev --dart-define=API_DOMAIN=dev.core.ee3080.cyanprint.dev
+        flutter build web --release --dart-define=AUTH_AUDIENCE=pitapair.dev "--dart-define=COURSECUPID_APP_NAME=CourseCupid - DEV" --dart-define=AUTH_DOMAIN=pitapair.jp.auth0.com --dart-define=AUTH_CLIENT_ID=vVAk30MNhFE2QkNAKjIb11G1RkVhtUvp --dart-define=COURSECUPID_APP_SUFFIX=.dev --dart-define=API_DOMAIN=dev.core.ee3080.cyanprint.dev
         cd build/web
         7z a -r ../web.zip ./*
     artifacts:
