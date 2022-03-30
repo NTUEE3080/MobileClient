@@ -53,9 +53,6 @@ workflows:
       - app-store-connect fetch-signing-files "com.eee3080.coursecupid.dev" --type IOS_APP_STORE --create
       - keychain add-certificates
       - xcode-project use-profiles
-      - echo $HOME
-      - ls $HOME
-      - cat $HOME/export_options.plist
       - flutter build ipa --export-options-plist=$HOME/export_options.plist --dart-define=APP_ENV=dev --dart-define=CC_APP_NAME=CourseCupidDEV --dart-define=CC_APP_SUFFIX=.dev
       - |
         # build web

@@ -1,0 +1,10 @@
+{
+  "AUTH_AUDIENCE": "pitapair.local",
+  "AUTH_CLIENT_ID": "Wy6TGIhysopb8CLtLrUqztcbpfQclHZK",
+  "AUTH_DOMAIN": "coursecupid-local.jp.auth0.com",
+  "API_DOMAIN": "157.245.207.101",
+  "SCHEME": "http",
+  "PORT": "9050",
+  "GIT_BRANCH": "unknown",
+  "GIT_SHA": "unknown"
+}

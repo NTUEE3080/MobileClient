@@ -2,7 +2,7 @@
     <configuration default="false" name="Flutter Start" type="FlutterRunConfigurationType"
         factoryName="Flutter">
         <option name="additionalArgs"
-            value="'--dart-define=APP_ENV=dev' '--dart-define=CC_APP_NAME=CourseCupid - DEV' '--dart-define=CC_APP_SUFFIX=.dev'" />
+            value="'--dart-define=APP_ENV=local' '--dart-define=CC_APP_NAME=CourseCupid - DEV' '--dart-define=CC_APP_SUFFIX=.dev'" />
         <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
         <method v="2" />
     </configuration>
