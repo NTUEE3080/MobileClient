@@ -47,16 +47,16 @@ workflows:
         echo "flutter.sdk=$HOME/programs/flutter" > "$FCI_BUILD_DIR/android/local.properties"
       - flutter packages pub get
       - flutter config --enable-web
-      - flutter build appbundle --release --dart-define=APP_ENV=prod --dart-define=COURSECUPID_APP_NAME=CourseCupid
+      - flutter build appbundle --release --dart-define=APP_ENV=prod --dart-define=CC_APP_NAME=CourseCupid
       - find . -name "Podfile" -execdir pod install \;
       - keychain initialize
       - app-store-connect fetch-signing-files "com.eee3080.coursecupid" --type IOS_APP_STORE --create
       - keychain add-certificates
       - xcode-project use-profiles
-      - flutter build ipa --export-options-plist=$HOME/export_options.plist --dart-define=APP_ENV=prod --dart-define=COURSECUPID_APP_NAME=CourseCupid
+      - flutter build ipa --export-options-plist=$HOME/export_options.plist --dart-define=APP_ENV=prod --dart-define=CC_APP_NAME=CourseCupid
       - |
         # build web
-        flutter build web --release --dart-define=APP_ENV=prod --dart-define=COURSECUPID_APP_NAME=CourseCupid
+        flutter build web --release --dart-define=APP_ENV=prod --dart-define=CC_APP_NAME=CourseCupid
         cd build/web
         7z a -r ../web.zip ./*
     artifacts:
