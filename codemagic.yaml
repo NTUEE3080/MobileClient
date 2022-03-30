@@ -41,7 +41,7 @@ workflows:
         echo "flutter.sdk=$HOME/programs/flutter" > "$FCI_BUILD_DIR/android/local.properties"
       - flutter packages pub get
       - flutter config --enable-web
-      - flutter build appbundle --release --dart-define=AUTH_AUDIENCE=pitapair.dev "--dart-define=CC_APP_NAME=CourseCupid - DEV" --dart-define=AUTH_DOMAIN=pitapair.jp.auth0.com --dart-define=AUTH_CLIENT_ID=vVAk30MNhFE2QkNAKjIb11G1RkVhtUvp --dart-define=CC_APP_SUFFIX=.dev --dart-define=API_DOMAIN=dev.core.ee3080.cyanprint.dev
+      - flutter build appbundle --release --dart-define=APP_ENV=dev "--dart-define=CC_APP_NAME=CourseCupid - DEV" --dart-define=CC_APP_SUFFIX=.dev
 
       # build ios
       - find . -name "Podfile" -execdir pod install \;
@@ -49,12 +49,12 @@ workflows:
       - app-store-connect fetch-signing-files "com.eee3080.coursecupid.dev" --type IOS_APP_STORE --create
       - keychain add-certificates
       - xcode-project use-profiles
-      - flutter build ipa --export-options-plist=~/export_options.plist "--dart-define=CC_APP_NAME=CourseCupid - DEV" --dart-define=CC_APP_SUFFIX=.dev
+      - flutter build ipa --dart-define=APP_ENV=dev "--dart-define=CC_APP_NAME=CourseCupid - DEV" --dart-define=CC_APP_SUFFIX=.dev
 
       # build web
       - |
         # build web
-        flutter build web --release --dart-define=AUTH_AUDIENCE=pitapair.dev "--dart-define=CC_APP_NAME=CourseCupid - DEV" --dart-define=AUTH_DOMAIN=pitapair.jp.auth0.com --dart-define=AUTH_CLIENT_ID=vVAk30MNhFE2QkNAKjIb11G1RkVhtUvp --dart-define=CC_APP_SUFFIX=.dev --dart-define=API_DOMAIN=dev.core.ee3080.cyanprint.dev
+        flutter build web --release --dart-define=APP_ENV=dev "--dart-define=CC_APP_NAME=CourseCupid - DEV" --dart-define=CC_APP_SUFFIX=.dev
         cd build/web
         7z a -r ../web.zip ./*
     artifacts:
