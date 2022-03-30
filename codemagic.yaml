@@ -20,6 +20,7 @@ workflows:
       xcode: latest
       cocoapods: default
     scripts:
+      # build android
       - |
         # set up key.properties
         echo $FCI_KEYSTORE | base64 --decode > $FCI_KEYSTORE_PATH
@@ -35,13 +36,16 @@ workflows:
       - flutter packages pub get
       - flutter config --enable-web
       - flutter build appbundle --release --dart-define=AUTH_AUDIENCE=pitapair.dev "--dart-define=COURSECUPID_APP_NAME=CourseCupid - DEV" --dart-define=AUTH_DOMAIN=pitapair.jp.auth0.com --dart-define=AUTH_CLIENT_ID=vVAk30MNhFE2QkNAKjIb11G1RkVhtUvp --dart-define=COURSECUPID_APP_SUFFIX=.dev --dart-define=API_DOMAIN=dev.core.ee3080.cyanprint.dev
+
+      # build ios
       - find . -name "Podfile" -execdir pod install \;
       - keychain initialize
-      - app-store-connect fetch-signing-files "com.eee3080.coursecupid.dev" --type
-        IOS_APP_STORE --create
+      - app-store-connect fetch-signing-files "com.eee3080.coursecupid.dev" --type IOS_APP_STORE --create
       - keychain add-certificates
       - xcode-project use-profiles
       - flutter build ipa --export-options-plist=~/export_options.plist --dart-define=AUTH_AUDIENCE=pitapair.dev "--dart-define=COURSECUPID_APP_NAME=CourseCupid - DEV" --dart-define=AUTH_DOMAIN=pitapair.jp.auth0.com --dart-define=AUTH_CLIENT_ID=vVAk30MNhFE2QkNAKjIb11G1RkVhtUvp --dart-define=COURSECUPID_APP_SUFFIX=.dev --dart-define=API_DOMAIN=dev.core.ee3080.cyanprint.dev
+
+      # build web
       - |
         # build web
         flutter build web --release --dart-define=AUTH_AUDIENCE=pitapair.dev "--dart-define=COURSECUPID_APP_NAME=CourseCupid - DEV" --dart-define=AUTH_DOMAIN=pitapair.jp.auth0.com --dart-define=AUTH_CLIENT_ID=vVAk30MNhFE2QkNAKjIb11G1RkVhtUvp --dart-define=COURSECUPID_APP_SUFFIX=.dev --dart-define=API_DOMAIN=dev.core.ee3080.cyanprint.dev
