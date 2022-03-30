@@ -1,31 +1,56 @@
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+class _JSONConfig {
+  final String? _authDomain;
+  final String? _authClientId;
+  final String? _authAudience;
+  final String? _gitBranch;
+  final String? _gitSha;
+  final String? _apiDomain;
+  final String? _apiScheme;
+  final String? _apiPort;
+
+  _JSONConfig(
+      this._authDomain,
+      this._authClientId,
+      this._authAudience,
+      this._gitBranch,
+      this._gitSha,
+      this._apiDomain,
+      this._apiScheme,
+      this._apiPort);
+}
+
+class _ConfigReader {
+  static final Map<String, _JSONConfig> _configs = {};
+
+  static Future<_JSONConfig> fromPlatform(String env) async {
+    if (_configs[env] != null) return _configs[env]!;
+
+    final configString = await rootBundle.loadString('env/$env.json');
+    var _config = json.decode(configString) as Map<String, dynamic>;
+    var config = _JSONConfig(
+      _config["AUTH_DOMAIN"],
+      _config["AUTH_CLIENT_ID"],
+      _config["AUTH_AUDIENCE"],
+      _config["GIT_BRANCH"],
+      _config["GIT_SHA"],
+      _config["API_DOMAIN"],
+      _config["SCHEME"],
+      _config["PORT"],
+    );
+    _configs[env] = config;
+    return config;
+  }
+}
+
 class _RawEnvironment {
-  final String _authDomain = const String.fromEnvironment('AUTH_DOMAIN');
-  final String _authClientId = const String.fromEnvironment('AUTH_CLIENT_ID');
-  final String _authAudience = const String.fromEnvironment('AUTH_AUDIENCE');
-  final String _gitBranch = const String.fromEnvironment('GIT_BRANCH');
-  final String _gitSha = const String.fromEnvironment('GIT_SHA');
-  final String _apiDomain = const String.fromEnvironment('API_DOMAIN');
-  final String _apiScheme = const String.fromEnvironment('API_SCHEME');
-  final String _apiPort = const String.fromEnvironment('API_PORT');
+  final String _appEnv = const String.fromEnvironment("APP_ENV");
 
-  String? get authDomain => _authDomain.isEmpty ? null : _authDomain;
-
-  String? get authClientId => _authClientId.isEmpty ? null : _authClientId;
-
-  String? get authAudience => _authAudience.isEmpty ? null : _authAudience;
-
-  String? get gitBranch => _gitBranch.isEmpty ? null : _gitBranch;
-
-  String? get gitSha => _gitBranch.isEmpty ? null : _gitSha;
-
-  String? get apiDomain => _apiDomain.isEmpty ? null : _apiDomain;
-
-  String? get apiScheme => _apiScheme.isEmpty ? null : _apiScheme;
-
-  String? get apiPort => _apiPort.isEmpty ? null : _apiPort;
-
+  String get appEnv => _appEnv == "" ? "dev" : _appEnv;
 }
 
 class AppConfiguration {
@@ -49,8 +74,7 @@ class AppConfiguration {
   static AppConfiguration? _fromPlatform;
   static AppConfiguration? _fromPlatformErrorless;
 
-  AppConfiguration(
-      this.authDomain,
+  AppConfiguration(this.authDomain,
       this.authClientId,
       this.authAudience,
       this.appName,
@@ -73,14 +97,19 @@ class AppConfiguration {
     }
     final packageInfo = await PackageInfo.fromPlatform();
     final raw = _RawEnvironment();
-    final authDomain = raw.authDomain ?? "";
-    final authClientId = raw.authClientId ?? "";
-    final authAud = raw.authAudience ?? "";
-    final apiDomain = raw.apiDomain ?? "";
-    final scheme = raw.apiScheme ?? "https";
-    final gitBranch = raw.gitBranch ?? "Unknown Branch";
-    final gitSha = raw.gitSha ?? "Unknown SHA";
-    final port = raw.apiPort == null ? "" : ":${raw.apiPort}";
+
+    var c = await _ConfigReader.fromPlatform(raw._appEnv);
+
+    final authDomain = c._authDomain ?? "";
+    final authClientId = c._authClientId ?? "";
+    final authAud = c._authAudience ?? "";
+    final apiDomain = c._apiDomain ?? "";
+
+    final scheme = c._apiScheme ?? "https";
+    final gitBranch = c._gitBranch ?? "Unknown Branch";
+    final gitSha = c._gitSha ?? "Unknown SHA";
+    final port = c._apiPort == null ? "" : ":${c._apiPort}";
+
     final apiUrl = "$scheme://$apiDomain$port";
 
     final config = AppConfiguration(
@@ -97,8 +126,8 @@ class AppConfiguration {
       gitSha,
       apiUrl,
       apiDomain,
-      raw.apiScheme,
-      raw.apiPort,
+      c._apiScheme ?? "",
+      c._apiPort ?? "",
       packageInfo.buildSignature,
     );
     _fromPlatformErrorless = config;
@@ -111,18 +140,21 @@ class AppConfiguration {
     }
     final packageInfo = await PackageInfo.fromPlatform();
     final raw = _RawEnvironment();
-    final authDomain = raw.authDomain ??
+
+    var c = await _ConfigReader.fromPlatform(raw._appEnv);
+
+    final authDomain = c._authDomain ??
         (throw const FormatException("Auth Domain not defined"));
-    final authClientId = raw.authClientId ??
+    final authClientId = c._authClientId ??
         (throw const FormatException("Auth Client ID not defined"));
-    final authAud = raw.authAudience ??
+    final authAud = c._authAudience ??
         (throw const FormatException("Auth Audience not defined"));
-    final apiDomain = raw.apiDomain ??
-        (throw const FormatException("API Domain not defined"));
-    final scheme = raw.apiScheme ?? "https";
-    final gitBranch = raw.gitBranch ?? "Unknown Branch";
-    final gitSha = raw.gitSha ?? "Unknown SHA";
-    final port = raw.apiPort == null ? "" : ":${raw.apiPort}";
+    final apiDomain =
+        c._apiDomain ?? (throw const FormatException("API Domain not defined"));
+    final scheme = c._apiScheme ?? "https";
+    final gitBranch = c._gitBranch ?? "Unknown Branch";
+    final gitSha = c._gitSha ?? "Unknown SHA";
+    final port = c._apiPort == null ? "" : ":${c._apiPort}";
     final apiUrl = "$scheme://$apiDomain$port";
 
     final config = AppConfiguration(
@@ -139,8 +171,8 @@ class AppConfiguration {
       gitSha,
       apiUrl,
       apiDomain,
-      raw.apiScheme,
-      raw.apiPort,
+      c._apiScheme ?? "",
+      c._apiPort ?? "",
       packageInfo.buildSignature,
     );
     _fromPlatform = config;

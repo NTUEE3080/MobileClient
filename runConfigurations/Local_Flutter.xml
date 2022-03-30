@@ -1,11 +1,11 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Local Flutter" type="FlutterRunConfigurationType" factoryName="Flutter">
     <option name="additionalArgs" value="'--dart-define=AUTH_AUDIENCE=pitapair.dev'
-        '--dart-define=COURSECUPID_APP_NAME=CourseCupid - DEV'
+        '--dart-define=CC_APP_NAME=CourseCupid - DEV'
         '--dart-define=AUTH_DOMAIN=pitapair.jp.auth0.com'
         '--dart-define=AUTH_CLIENT_ID=vVAk30MNhFE2QkNAKjIb11G1RkVhtUvp'
-        '--dart-define=COURSECUPID_APP_SUFFIX=.dev'
-        '--dart-define=COURSECUPID_APP_SUFFIX=.dev'
+        '--dart-define=CC_APP_SUFFIX=.dev'
+        '--dart-define=CC_APP_SUFFIX=.dev'
         '--dart-define=API_DOMAIN=dev.core.e3080.cyanprint.dev'" />
     <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
     <method v="2" />

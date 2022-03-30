@@ -11,8 +11,8 @@ tasks:
         flutter run --host-vmservice-port=41234 --dds-port=37555 \
         --dart-define=AUTH_DOMAIN="pitapairing.au.auth0.com" \
         --dart-define=AUTH_CLIENT_ID="bnWYFCnQ5AgzcAbtNX8AnCmbhZVJoEkT" \
-        --dart-define=COURSECUPID_APP_NAME="CourseCupid - DEV" \
-        --dart-define=COURSECUPID_APP_SUFFIX=".dev" \
+        --dart-define=CC_APP_NAME="CourseCupid - DEV" \
+        --dart-define=CC_APP_SUFFIX=".dev" \
         --dart-define=API_DOMAIN="157.245.207.101" \
         --dart-define=API_SCHEME="http" \
         --dart-define=API_PORT="9050" \

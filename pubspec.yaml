@@ -51,6 +51,7 @@ flutter_icons:
 # The following section is specific to Flutter.
 flutter:
   assets:
+    - env/
     - assets/theme/stary_night.json
     - assets/theme/dark_forest.json
     - assets/theme_main.json

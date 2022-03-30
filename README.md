@@ -16,6 +16,6 @@ Use during `flutter run` and `flutter compile` with DART
 | --- | --- | --- | --- |
 | `AUTH_DOMAIN` | Auth0 Authority Domain | `null` | `true` |
 | `AUTH_CLIENT_ID` | Auth0 Client Id | `null` | `true` |
-| `COURSECUPID_APP_NAME` | Application Name | `null` | `true` |
-| `COURSECUPID_APP_SUFFIX` | Application Package ID Suffix | `null` | `true` |
+| `CC_APP_NAME` | Application Name | `null` | `true` |
+| `CC_APP_SUFFIX` | Application Package ID Suffix | `null` | `true` |
 | `API_DOMAIN` | API Domain Name | `null` | `true` |
