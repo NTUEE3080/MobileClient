@@ -56,7 +56,7 @@ workflows:
       - echo $HOME
       - ls $HOME
       - cat $HOME/export_options.plist
-      - flutter build ipa --export-options-plist=~/export_options.plist --dart-define=APP_ENV=dev --dart-define=CC_APP_NAME=CourseCupidDEV --dart-define=CC_APP_SUFFIX=.dev
+      - flutter build ipa --export-options-plist=$HOME/export_options.plist --dart-define=APP_ENV=dev --dart-define=CC_APP_NAME=CourseCupidDEV --dart-define=CC_APP_SUFFIX=.dev
       - |
         # build web
         flutter build web --release --dart-define=APP_ENV=dev --dart-define=CC_APP_NAME=CourseCupidDEV --dart-define=CC_APP_SUFFIX=.dev
