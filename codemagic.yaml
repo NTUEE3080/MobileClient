@@ -11,6 +11,12 @@ workflows:
       branch_patterns:
         - pattern: main
       cancel_previous_builds: true
+    cache:
+      cache_paths:
+        - $FLUTTER_ROOT/.pub-cache
+        - $HOME/.gradle/caches
+        - $HOME/Library/Caches/CocoaPods
+        - $CM_BUILD_DIR/node_modules
     environment:
       vars:
         FCI_KEYSTORE_PATH: /tmp/keystore.keystore
