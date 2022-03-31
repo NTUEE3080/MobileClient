@@ -130,6 +130,8 @@ workflows:
       - |
         # set up local properties
         echo "flutter.sdk=$HOME/programs/flutter" > "$FCI_BUILD_DIR/android/local.properties"
+        rm "$FCI_BUILD_DIR/ios/Runner.xcodeproj/project.pbxproj"
+        mv "$FCI_BUILD_DIR/ios/Runner.xcodeproj/project.dev.pbxproj" "$FCI_BUILD_DIR/ios/Runner.xcodeproj/project.pbxproj"
       - flutter packages pub get
       - flutter config --enable-web
       - flutter build appbundle --release --dart-define=APP_ENV=dev "--dart-define=CC_APP_NAME=CourseCupid - DEV" --dart-define=CC_APP_SUFFIX=.dev
