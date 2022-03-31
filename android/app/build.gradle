@@ -46,6 +46,9 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
+def suffix = dartEnvironmentVariables.CC_APP_SUFFIX
+def appLink = (suffix == null || suffix.isEmpty()) ? appId : appId + suffix
+
 android {
     compileSdkVersion flutter.compileSdkVersion
 
@@ -71,7 +74,7 @@ android {
         versionName flutterVersionName
         resValue "string", "app_name", dartEnvironmentVariables.CC_APP_NAME
         manifestPlaceholders += [
-            'appAuthRedirectScheme': appId + dartEnvironmentVariables.CC_APP_SUFFIX,
+            'appAuthRedirectScheme': appLink
         ]
     }
 
