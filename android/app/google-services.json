@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "221225151362",
+    "project_id": "course-cupid-dev",
+    "storage_bucket": "course-cupid-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:221225151362:android:3ad24bae4ae93ac13efd9b",
+        "android_client_info": {
+          "package_name": "com.eee3080.coursecupid.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "221225151362-u6lklutcla48304nddne1dfvbrutch3b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.eee3080.coursecupid.dev",
+            "certificate_hash": "6716f4ccca0a5d9075dc828482f46f9d4731e2d6"
+          }
+        },
+        {
+          "client_id": "221225151362-j4f48egj256jfue992u27je7vqglm2fc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlxPrIxENAqoIBZOX-y09PqMmA7UfQ7kQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "221225151362-j4f48egj256jfue992u27je7vqglm2fc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "221225151362-eaou92j3n4hjb4g3ahav90tp1t52k7cg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.eee3080.coursecupid.dev",
+                "app_store_id": "1616438886"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

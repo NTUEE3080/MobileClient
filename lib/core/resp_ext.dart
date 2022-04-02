@@ -18,8 +18,6 @@ extension ResponseExt<T> on Response<T> {
     if (isSuccessful) {
       return Result.ok(this.body as T);
     } else {
-      logger.i(error.runtimeType);
-      logger.i(error.toString());
       if (error is String) {
         var e = error as String;
         return Result.error(HttpResponseError.fromJson(jsonDecode(e)));
