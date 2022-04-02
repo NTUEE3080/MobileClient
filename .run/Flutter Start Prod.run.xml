@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="Flutter Start Prod" type="FlutterRunConfigurationType"
+        factoryName="Flutter">
+        <option name="additionalArgs"
+            value="'--dart-define=APP_ENV=prod' '--dart-define=CC_APP_NAME=CourseCupid'" />
+        <option name="filePath" value="$PROJECT_DIR$/lib/main.dart" />
+        <method v="2" />
+    </configuration>
+</component>
