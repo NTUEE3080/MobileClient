@@ -1,6 +1,7 @@
 import 'package:coursecupid/auth/initial.dart';
 import 'package:coursecupid/core/animation.dart';
 import 'package:coursecupid/core/err_animation.dart';
+import 'package:coursecupid/core/notification_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
@@ -21,7 +22,8 @@ Widget noOp(login, logout, user, message) {
 class AuthFrame extends StatefulWidget {
   final ThemeData theme;
 
-  final Widget Function(Login login, Logout logout, AuthMetaUser user, String message) child;
+  final Widget Function(
+      Login login, Logout logout, AuthMetaUser user, String message) child;
 
   const AuthFrame({Key? key, required this.child, required this.theme})
       : super(key: key);
@@ -31,17 +33,20 @@ class AuthFrame extends StatefulWidget {
 }
 
 class _AuthFrameState extends State<AuthFrame> {
-  Widget Function(Login login, Logout logout, AuthMetaUser user, String message) child = noOp;
+  Widget Function(Login login, Logout logout, AuthMetaUser user, String message)
+      child = noOp;
   bool isBusy = false;
   bool isFatal = false;
   String errorMessage = '';
   Exception? ex;
   StackTrace? st;
   AuthMetaUser user = AuthMetaUser(false, false, false, false, null, null);
+  late NotificationService service;
 
   @override
   void initState() {
-    initAction();
+    service = NotificationService(user);
+    asyncInit();
     super.initState();
     child = widget.child;
   }
@@ -50,7 +55,7 @@ class _AuthFrameState extends State<AuthFrame> {
 
   setFree() => setState(() => isBusy = false);
 
-  setFatal(Exception e, StackTrace trace){
+  setFatal(Exception e, StackTrace trace) {
     setState(() => isFatal = true);
     setState(() => ex = e);
     setState(() => st = trace);
@@ -58,16 +63,29 @@ class _AuthFrameState extends State<AuthFrame> {
 
   updateError(String error) => setState(() => errorMessage = error);
 
-  updateUser(AuthMetaUser? r) => setState(
-      () => user = r ?? AuthMetaUser(false, false, false, false, null, null));
+  updateUser(AuthMetaUser? r) {
+    setState(
+        () => user = r ?? AuthMetaUser(false, false, false, false, null, null));
+    service.updateUser(user);
+  }
+
+  Future asyncInit() async {
+    await initAction();
+    try {
+      setBusy();
+      await service.init(context);
+      setFree();
+    } on Exception catch (e, st) {
+      logger.e("Catch exception", e);
+      setFatal(e, st);
+    }
+  }
 
   Future<void> initAction() async {
     try {
       setBusy();
       var auth = await Auth0.fromPlatform();
-      logger.i("start refresh session");
       var user = await auth.refreshSession();
-      logger.i("complete refresh session");
       updateUser(user);
       setFree();
     } on Exception catch (e, st) {
@@ -117,13 +135,13 @@ class _AuthFrameState extends State<AuthFrame> {
     var nonError = registered
         ? child(login, logout, user, errorMessage)
         : InitialPage(
-      refresh: initAction,
-      user: user,
-      loginAction: login,
-      logoutAction: logout,
-      loginError: errorMessage,
-      busy: isBusy,
-    );
+            refresh: initAction,
+            user: user,
+            loginAction: login,
+            logoutAction: logout,
+            loginError: errorMessage,
+            busy: isBusy,
+          );
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Course Cupid',

@@ -82,7 +82,6 @@ class Auth0 {
       return Result.error(egen("No refresh token obtained"));
     }
     final idToken = _parseIdToken(r.idToken!);
-    logger.i(idToken);
     return Result.ok(AuthTokens(idToken, r.accessToken!, r.refreshToken!));
   }
 
@@ -112,7 +111,6 @@ class Auth0 {
   Future<Result<AuthMetaUser, HttpResponseError>> login() async {
     return await getToken()
         .andThenAsync((t) => _getUserData(t.accessToken).thenMap((value) {
-              logger.i(value);
               return AuthMetaUser(
                   true,
                   isNtu(t.idToken.email),
@@ -149,13 +147,11 @@ class Auth0 {
       var r = _parseAccessToken(storedAccessToken);
       var exp = DateTime.fromMillisecondsSinceEpoch(r.exp * 1000);
       var now = DateTime.now();
-      logger.i("Token Expiry: $exp , Now: $now");
       if (now.isBefore(exp)) {
-        logger.i("Using stored access token");
         return Result.ok(storedAccessToken);
       }
     }
-    logger.i("Refreshing token way too early");
+    logger.w("Refreshing token way too early");
     return await refreshToken().thenMap((value) => value?.accessToken);
   }
 
