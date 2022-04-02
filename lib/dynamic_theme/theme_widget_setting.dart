@@ -110,6 +110,7 @@ class _ThemeSettingState extends State<ThemeSetting> {
                   .toList()),
         ),
         deleteAccount(context),
+        const SizedBox(height: 40),
       ],
     );
   }
