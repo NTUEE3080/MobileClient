@@ -83,8 +83,29 @@
           media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
     <link rel="apple-touch-startup-image" href="apple-splash-1136-640.jpg"
           media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)">
+
+    <!-- The core Firebase JS SDK (always required for using any Firebase service) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script>
+        var firebaseConfig = {
+          apiKey: "AIzaSyAM3YVPKl-S0GL3YPgZ_M1l2NAySVE020E",
+          authDomain: "course-cupid-dev.firebaseapp.com",
+          projectId: "course-cupid-dev",
+          storageBucket: "course-cupid-dev.appspot.com",
+          messagingSenderId: "221225151362",
+          appId: "1:221225151362:web:e0dcbd825dc5a6973efd9b"
+        };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+
+
+
+    </script>
+
 </head>
 <body>
+
 
 <!-- This script installs service_worker.js to provide PWA functionality to
    application. For more information, see:
