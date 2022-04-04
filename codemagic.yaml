@@ -50,6 +50,9 @@ workflows:
         mv "$FCI_BUILD_DIR/ios/Runner/GoogleService-Info.prod.plist" "$FCI_BUILD_DIR/ios/Runner/GoogleService-Info.plist"
         rm "$FCI_BUILD_DIR/android/app/google-services.json"
         mv "$FCI_BUILD_DIR/android/app/google-services.prod.json" "$FCI_BUILD_DIR/android/app/google-services.json"
+        rm "$FCI_BUILD_DIR/ios/Runner/Runner.entitlements"
+        mv "$FCI_BUILD_DIR/ios/Runner/Runner.prod.entitlements" "$FCI_BUILD_DIR/ios/Runner/Runner.entitlements"
+
       - |
         # set up local properties
         echo "flutter.sdk=$HOME/programs/flutter" > "$FCI_BUILD_DIR/android/local.properties"
