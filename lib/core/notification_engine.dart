@@ -9,7 +9,7 @@ import 'notification.dart';
 
 Future _backgroundHandler(RemoteMessage message) async {
   logger.i("Handling a background message: ${message.messageId}");
-  var n = _toDomain(message);
+  // var n = _toDomain(message);
   // Write actual background controller here
 }
 
@@ -52,8 +52,8 @@ class NotificationService {
     daemon = NotificationDaemon(
         // initial handler
         (message) async {
-      if (message.targetAud == "all" ||
-          user.tokenData?.sub == message.targetAud) {
+          if (message.targetAud == "all" ||
+          (user.tokenData?.sub ?? "nil") == message.targetAud) {
         showSimpleNotification(
           Text(message.dataTitle ?? message.title ?? "Unknown Title"),
           leading: toIcon(message.icon ?? ""),
@@ -65,8 +65,8 @@ class NotificationService {
     },
         // inApp Handler
         (message) async {
-      if (message.targetAud == "all" ||
-          user.tokenData?.sub == message.targetAud) {
+          if (message.targetAud == "all" ||
+          (user.tokenData?.sub ?? "nil") == message.targetAud) {
         showSimpleNotification(
           Text(message.dataTitle ?? message.title ?? "Unknown Title"),
           leading: toIcon(message.icon ?? ""),

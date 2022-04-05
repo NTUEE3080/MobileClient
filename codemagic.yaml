@@ -50,6 +50,9 @@ workflows:
         mv "$FCI_BUILD_DIR/ios/Runner/GoogleService-Info.prod.plist" "$FCI_BUILD_DIR/ios/Runner/GoogleService-Info.plist"
         rm "$FCI_BUILD_DIR/android/app/google-services.json"
         mv "$FCI_BUILD_DIR/android/app/google-services.prod.json" "$FCI_BUILD_DIR/android/app/google-services.json"
+        rm "$FCI_BUILD_DIR/ios/Runner/Runner.entitlements"
+        mv "$FCI_BUILD_DIR/ios/Runner/Runner.prod.entitlements" "$FCI_BUILD_DIR/ios/Runner/Runner.entitlements"
+
       - |
         # set up local properties
         echo "flutter.sdk=$HOME/programs/flutter" > "$FCI_BUILD_DIR/android/local.properties"
@@ -65,18 +68,12 @@ workflows:
         echo "CC_APP_NAME=CourseCupid" > "$FCI_BUILD_DIR/ios/coursecupid.xconfig"
         echo "CC_APP_SUFFIX=" >> "$FCI_BUILD_DIR/ios/coursecupid.xconfig"
       - flutter build ipa --export-options-plist=$HOME/export_options.plist --dart-define=APP_ENV=prod --dart-define=CC_APP_NAME=CourseCupid
-      - |
-        # build web
-        flutter build web --release --dart-define=APP_ENV=prod --dart-define=CC_APP_NAME=CourseCupid
-        cd build/web
-        7z a -r ../web.zip ./*
     artifacts:
       - build/**/outputs/apk/**/*.apk
       - build/**/outputs/bundle/**/*.aab
       - build/**/outputs/**/mapping.txt
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
-      - build/web.zip
       - '*.snap'
       - build/windows/**/*.msix
       - flutter_drive.log
@@ -150,18 +147,12 @@ workflows:
         echo "CC_APP_NAME=CourseCupid - DEV" > "$FCI_BUILD_DIR/ios/coursecupid.xconfig"
         echo "CC_APP_SUFFIX=.dev" >> "$FCI_BUILD_DIR/ios/coursecupid.xconfig"
       - flutter build ipa --export-options-plist=$HOME/export_options.plist --dart-define=APP_ENV=dev "--dart-define=CC_APP_NAME=CourseCupid - DEV" --dart-define=CC_APP_SUFFIX=.dev
-      - |
-        # build web
-        flutter build web --release --dart-define=APP_ENV=dev "--dart-define=CC_APP_NAME=CourseCupid - DEV" --dart-define=CC_APP_SUFFIX=.dev
-        cd build/web
-        7z a -r ../web.zip ./*
     artifacts:
       - build/**/outputs/apk/**/*.apk
       - build/**/outputs/bundle/**/*.aab
       - build/**/outputs/**/mapping.txt
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
-      - build/web.zip
       - '*.snap'
       - build/windows/**/*.msix
       - flutter_drive.log
