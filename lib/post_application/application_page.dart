@@ -92,7 +92,6 @@ class _CreateModulePost extends State<CreateApplicationPage> {
   @override
   Widget build(BuildContext context) {
     var t = Theme.of(context);
-    var cs = t.colorScheme;
     var box20 = const SizedBox(height: 20);
     var errWidget = createErr == null
         ? box20
@@ -124,8 +123,8 @@ class _CreateModulePost extends State<CreateApplicationPage> {
                 .map((post) => SinglePostWidget(
                       create: _create(context),
                       have: p!.index!,
-                      post: post,
                       lookingFor: offers,
+                      post: post,
                     ))
                 .toList(),
           );

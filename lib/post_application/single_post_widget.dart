@@ -43,7 +43,7 @@ class _SinglePostWidgetState extends State<SinglePostWidget> {
             label: const Text("Offer to Trade")),
       ],
     );
-    var tradable = widget.post.index?.code != widget.post.index?.code;
+    var tradable = widget.post.index?.code != widget.have.code;
     var expanded = Column(
       children: [
         Row(
