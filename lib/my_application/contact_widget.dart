@@ -35,15 +35,16 @@ class ContactWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var t = Theme.of(context);
-    var cs = t.colorScheme;
     var pIndex = app.post?.index;
     var oIndex = app.applied?.index;
     var postIndexes = (pIndex == null ? <IndexPrincipalRes>[] : [pIndex]);
     var offerIndexes = (oIndex == null ? <IndexPrincipalRes>[] : [oIndex]);
     List<IndexPrincipalRes> yours = isOwner ? postIndexes : offerIndexes;
     List<IndexPrincipalRes> theirs = isOwner ? offerIndexes : postIndexes;
-    var email = isOwner
-        ? app.post?.owner?.email ?? "unknown email"
+
+    var o = isOwner;
+    var email = o
+        ? app.applied?.owner?.email ?? "unknown email"
         : postUser.email ?? "unknown email";
     return Scaffold(
         appBar: AppBar(
