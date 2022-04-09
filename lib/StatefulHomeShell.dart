@@ -1,8 +1,13 @@
 import 'package:coursecupid/auth/lib/user.dart';
+import 'package:coursecupid/core/animation.dart';
 import 'package:coursecupid/module/modules_page.dart';
 import 'package:coursecupid/my_application/application_loader.dart';
 import 'package:coursecupid/post_creation/create_module_post.dart';
+import 'package:coursecupid/suggestions/filterer.dart';
+import 'package:coursecupid/suggestions/suggestion_client.dart';
+import 'package:coursecupid/suggestions/suggestion_page.dart';
 import 'package:flutter/material.dart';
+import 'package:mdi/mdi.dart';
 
 import 'api_lib/swagger.swagger.dart';
 import 'bar_buttons.dart';
@@ -13,6 +18,7 @@ class BottomTabs {
   static const String module = "Modules";
   static const String applications = "Applications";
   static const String settings = "Settings";
+  static const String chat = "Chat";
 }
 
 class TopTabs {
@@ -51,7 +57,7 @@ class _ModuleState extends State<StatefulHomeShell> {
   TextEditingController _controller = TextEditingController();
   String btmTab = BottomTabs.module;
   Widget appBarTitle = const Text(BottomTabs.module);
-  int tabSize = 5;
+  int tabSize = 6;
 
   void _searchPressed(context) {
     setState(() {
@@ -107,37 +113,49 @@ class _ModuleState extends State<StatefulHomeShell> {
         break;
       case BottomTabs.applications:
         var rejected = ApplicationLoader(
-            logout: widget.logout,
             loadType: AppLoadType.rejected,
             api: widget.api,
             user: widget.user,
             controller: _controller);
         var applied = ApplicationLoader(
-            logout: widget.logout,
             loadType: AppLoadType.applied,
             api: widget.api,
             user: widget.user,
             controller: _controller);
         var offer = ApplicationLoader(
-            logout: widget.logout,
             loadType: AppLoadType.offer,
             api: widget.api,
             user: widget.user,
             controller: _controller);
         var done = ApplicationLoader(
-            logout: widget.logout,
             loadType: AppLoadType.done,
             api: widget.api,
             user: widget.user,
             controller: _controller);
-        var suggestions = const Text("hello");
+        var sug2client = TwoWaySuggestionClient(widget.api, widget.user);
+        var sug3client = ThreeWaySuggestionClient(widget.api, widget.user);
+        var sug2f = TwoWaySuggestionFilterer();
+        var sug3f = ThreeWaySuggestionFilterer();
+        var twoSuggestions = SuggestionPage<TwoWaySuggestionResp>(
+            api: widget.api,
+            controller: _controller,
+            user: widget.user,
+            client: sug2client,
+            filterer: sug2f);
+        var threeSuggestions = SuggestionPage<ThreeWaySuggestionResp>(
+            api: widget.api,
+            controller: _controller,
+            user: widget.user,
+            client: sug3client,
+            filterer: sug3f);
         page = TabBarView(
           children: [
             rejected,
             applied,
             offer,
             done,
-            suggestions,
+            twoSuggestions,
+            threeSuggestions,
           ],
         );
         break;
@@ -145,6 +163,11 @@ class _ModuleState extends State<StatefulHomeShell> {
         page = ThemeSetting(
           controller: _controller,
         );
+        break;
+      case BottomTabs.chat:
+        page = const AnimationFrame(
+            asset: LottieAnimations.puzzle,
+            text: "Sorry, this page is still in-progress");
     }
     var tabBar = btmTab == BottomTabs.applications
         ? const TabBar(isScrollable: true, tabs: [
@@ -152,7 +175,16 @@ class _ModuleState extends State<StatefulHomeShell> {
             Tab(icon: Icon(Icons.approval), text: "Applied"),
             Tab(icon: Icon(Icons.local_offer), text: "Offers"),
             Tab(icon: Icon(Icons.task_alt), text: "Completed"),
-            Tab(icon: Icon(Icons.lightbulb), text: "Suggestions"),
+            Tab(
+                icon: Icon(
+                  Mdi.numeric2BoxMultipleOutline,
+                ),
+                text: "Suggestions"),
+            Tab(
+                icon: Icon(
+                  Mdi.numeric3BoxMultipleOutline,
+                ),
+                text: "Suggestions"),
           ])
         : null;
     return DefaultTabController(
@@ -216,9 +248,9 @@ class _ModuleState extends State<StatefulHomeShell> {
                   text: 'Settings',
                 ),
                 BottomBarButton(
-                  icon: Icons.list,
-                  onPressed: () => _switchBottomTabs(BottomTabs.applications),
-                  text: 'Applications',
+                  icon: Icons.chat,
+                  onPressed: () => _switchBottomTabs(BottomTabs.chat),
+                  text: 'Chat',
                 ),
               ],
             ),

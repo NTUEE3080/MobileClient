@@ -33,6 +33,10 @@ class _ThemeSettingState extends State<ThemeSetting> {
         AppThemes.StarryNight),
     ThemeInfo(
         "Dark", const Color.fromRGBO(0x12, 0x12, 0x12, 1), AppThemes.Dark),
+    ThemeInfo("Dark Cupid", const Color.fromRGBO(0x12, 0x12, 0x12, 1),
+        AppThemes.DarkCupid),
+    ThemeInfo("Dark Pastel", const Color.fromRGBO(0x12, 0x12, 0x12, 1),
+        AppThemes.DarkPastel),
   ];
   List<ThemeInfo> filteredList = [];
   String _searchTerm = "";

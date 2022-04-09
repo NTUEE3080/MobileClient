@@ -52,8 +52,6 @@ class NotificationService {
     daemon = NotificationDaemon(
         // initial handler
         (message) async {
-          if (message.targetAud == "all" ||
-          (user.tokenData?.sub ?? "nil") == message.targetAud) {
         showSimpleNotification(
           Text(message.dataTitle ?? message.title ?? "Unknown Title"),
           leading: toIcon(message.icon ?? ""),
@@ -61,12 +59,9 @@ class NotificationService {
           background: cs.primary.withAlpha(0x88),
           duration: const Duration(seconds: 10),
         );
-      }
     },
         // inApp Handler
         (message) async {
-          if (message.targetAud == "all" ||
-          (user.tokenData?.sub ?? "nil") == message.targetAud) {
         showSimpleNotification(
           Text(message.dataTitle ?? message.title ?? "Unknown Title"),
           leading: toIcon(message.icon ?? ""),
@@ -74,12 +69,9 @@ class NotificationService {
           background: cs.primary.withAlpha(0x88),
           duration: const Duration(seconds: 10),
         );
-      }
     },
         // open handler
         (message) async {
-      if (message.targetAud == "all" ||
-          user.tokenData?.sub == message.targetAud) {}
     });
     await daemon.init();
   }
@@ -157,7 +149,6 @@ PushNotification _toDomain(RemoteMessage rm) {
     dataTitle: rm.data['title'] ?? "Unknown Title",
     dataBody: rm.data['body'] ?? "Unknown Body",
     type: rm.data['type'] ?? "",
-    targetAud: rm.data['target'] ?? "all",
     icon: rm.data["icon"],
   );
 }

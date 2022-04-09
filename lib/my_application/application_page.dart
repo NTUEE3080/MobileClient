@@ -11,14 +11,12 @@ import 'application_widget.dart';
 class ApplicationPage extends StatefulWidget {
   const ApplicationPage(
       {Key? key,
-      required this.logout,
       required this.appList,
       required this.api,
       required this.controller,
       required this.user,
       required this.refresh})
       : super(key: key);
-  final VoidCallback logout;
   final ApiService api;
   final AuthMetaUser user;
   final List<ApplicationRes> appList;
