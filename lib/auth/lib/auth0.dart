@@ -6,6 +6,8 @@ import 'package:coursecupid/core/app_config.dart';
 import 'package:coursecupid/core/resp_ext.dart';
 import 'package:coursecupid/core/result_ext.dart';
 import 'package:coursecupid/http_error.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
@@ -104,11 +106,21 @@ class Auth0 {
   }
 
   Future<AuthMetaUser> logout() async {
+    var api = await ApiService.fromPlatform();
+    await Firebase.initializeApp();
+    var _messaging = FirebaseMessaging.instance;
+    var token = await _messaging.getToken();
     await secureStorage.delete(key: 'refresh_token');
+    await api.access.deviceTokenDelete(token: token);
     return AuthMetaUser(false, false, false, false, null, null);
   }
 
   Future<Result<AuthMetaUser, HttpResponseError>> login() async {
+    var api = await ApiService.fromPlatform();
+    await Firebase.initializeApp();
+    var _messaging = FirebaseMessaging.instance;
+    var token = await _messaging.getToken();
+
     return await getToken()
         .andThenAsync((t) => _getUserData(t.accessToken).thenMap((value) {
               return AuthMetaUser(
@@ -118,10 +130,19 @@ class Auth0 {
                   value != null,
                   UserTokenData(t.idToken.sub, t.idToken.email),
                   value);
-            }));
+            }))
+        .runAsync((value) async {
+      await api.access.deviceTokenPost(token: token);
+      logger.i("updated device token");
+    });
   }
 
   Future<AuthMetaUser?> refreshSession() async {
+    var api = await ApiService.fromPlatform();
+    await Firebase.initializeApp();
+    var _messaging = FirebaseMessaging.instance;
+    var token = await _messaging.getToken();
+
     var r1 = await refreshToken();
     var result = await r1.thenAsync<AuthMetaUser?>((t) {
       if (t == null) {
@@ -135,6 +156,9 @@ class Auth0 {
             UserTokenData(t.idToken.sub, t.idToken.email),
             value));
       }
+    }).runAsync((value) async {
+      await api.access.deviceTokenPost(token: token);
+      logger.i("updated device token");
     });
 
     return result.getValueOrElse(() => null);

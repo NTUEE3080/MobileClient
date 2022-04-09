@@ -4,13 +4,11 @@ class PushNotification {
     this.body,
     this.dataTitle,
     this.dataBody,
-    this.targetAud,
     this.type,
     this.icon,
   });
 
   String? icon;
-  String? targetAud;
   String? type;
   String? title;
   String? body;

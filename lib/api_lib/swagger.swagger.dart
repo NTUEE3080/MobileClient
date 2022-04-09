@@ -74,6 +74,30 @@ abstract class Swagger extends ChopperService {
       @Path('appId') required String? appId});
 
   ///
+  ///@param token
+  Future<chopper.Response> deviceTokenPost({required String? token}) {
+    return _deviceTokenPost(token: token);
+  }
+
+  ///
+  ///@param token
+  @Post(path: '/Device/{token}', optionalBody: true)
+  Future<chopper.Response> _deviceTokenPost(
+      {@Path('token') required String? token});
+
+  ///
+  ///@param token
+  Future<chopper.Response> deviceTokenDelete({required String? token}) {
+    return _deviceTokenDelete(token: token);
+  }
+
+  ///
+  ///@param token
+  @Delete(path: '/Device/{token}')
+  Future<chopper.Response> _deviceTokenDelete(
+      {@Path('token') required String? token});
+
+  ///
   ///@param semester
   ///@param course
   ///@param day
@@ -1455,7 +1479,6 @@ class ThreeWaySuggestionResp {
   final PostPrincipalResp? post3;
   static const fromJsonFactory = _$ThreeWaySuggestionRespFromJson;
   static const toJsonFactory = _$ThreeWaySuggestionRespToJson;
-
   Map<String, dynamic> toJson() => _$ThreeWaySuggestionRespToJson(this);
 
   @override
@@ -1623,7 +1646,6 @@ class TwoWaySuggestionResp {
   final PostPrincipalResp? post2;
   static const fromJsonFactory = _$TwoWaySuggestionRespFromJson;
   static const toJsonFactory = _$TwoWaySuggestionRespToJson;
-
   Map<String, dynamic> toJson() => _$TwoWaySuggestionRespToJson(this);
 
   @override
