@@ -73,47 +73,49 @@ class _CreateModulePost extends State<CreateModulePost> {
           ),
           title: const Text("Create Post"),
         ),
-        body: Column(children: [
-          errWidget,
-          Container(
-            padding: const EdgeInsets.all(12),
-            child: DropdownSearch<ModulePrincipalRes>(
-              dropdownSearchDecoration:
-                  const InputDecoration(labelText: 'Module'),
-              popupItemBuilder:
-                  (BuildContext context, ModulePrincipalRes? p, bool selected) {
-                return ListTile(
-                  leading: const Icon(Icons.description),
-                  title: Text(
-                    p?.courseCode ?? "Unknown Course Code",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+        body: SingleChildScrollView(
+          child: Column(children: [
+            errWidget,
+            Container(
+              padding: const EdgeInsets.all(12),
+              child: DropdownSearch<ModulePrincipalRes>(
+                dropdownSearchDecoration:
+                    const InputDecoration(labelText: 'Module'),
+                popupItemBuilder: (BuildContext context, ModulePrincipalRes? p,
+                    bool selected) {
+                  return ListTile(
+                    leading: const Icon(Icons.description),
+                    title: Text(
+                      p?.courseCode ?? "Unknown Course Code",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  subtitle: Text(p?.name ?? "Unknown Course Name"),
-                  trailing: Chip(
-                    label: Text(
-                      "${p?.academicUnit ?? -1} AU",
-                      style: TextStyle(color: cs.onPrimary),
+                    subtitle: Text(p?.name ?? "Unknown Course Name"),
+                    trailing: Chip(
+                      label: Text(
+                        "${p?.academicUnit ?? -1} AU",
+                        style: TextStyle(color: cs.onPrimary),
+                      ),
+                      backgroundColor: cs.secondary,
                     ),
-                    backgroundColor: cs.secondary,
-                  ),
-                );
-              },
-              showSearchBox: true,
-              showClearButton: true,
-              mode: Mode.BOTTOM_SHEET,
-              onFind: search,
-              itemAsString: (ModulePrincipalRes? u) =>
-                  "${u?.courseCode}: ${u?.name}",
-              onChanged: (ModulePrincipalRes? data) {
-                setState(() => _selected = null);
-                setState(() => _selected = data);
-              },
-              selectedItem: _selected,
+                  );
+                },
+                showSearchBox: true,
+                showClearButton: true,
+                mode: Mode.BOTTOM_SHEET,
+                onFind: search,
+                itemAsString: (ModulePrincipalRes? u) =>
+                    "${u?.courseCode}: ${u?.name}",
+                onChanged: (ModulePrincipalRes? data) {
+                  setState(() => _selected = null);
+                  setState(() => _selected = data);
+                },
+                selectedItem: _selected,
+              ),
             ),
-          ),
-          indexChoice
-        ]));
+            indexChoice
+          ]),
+        ));
   }
 }

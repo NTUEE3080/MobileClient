@@ -243,7 +243,7 @@ Map<String, dynamic> _$PostPrincipalRespToJson(PostPrincipalResp instance) =>
     };
 
 PostResp _$PostRespFromJson(Map<String, dynamic> json) => PostResp(
-  post: json['post'] == null
+      post: json['post'] == null
           ? null
           : PostPrincipalResp.fromJson(json['post'] as Map<String, dynamic>),
       offers: (json['offers'] as List<dynamic>?)
@@ -258,8 +258,7 @@ PostResp _$PostRespFromJson(Map<String, dynamic> json) => PostResp(
           [],
     );
 
-Map<String, dynamic> _$PostRespToJson(PostResp instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$PostRespToJson(PostResp instance) => <String, dynamic>{
       'post': instance.post?.toJson(),
       'offers': instance.offers?.map((e) => e.toJson()).toList(),
       'applications': instance.applications?.map((e) => e.toJson()).toList(),
@@ -274,6 +273,38 @@ Map<String, dynamic> _$SemesterResToJson(SemesterRes instance) =>
     <String, dynamic>{
       'semester': instance.semester,
       'current': instance.current,
+    };
+
+ThreeWaySuggestionResp _$ThreeWaySuggestionRespFromJson(
+        Map<String, dynamic> json) =>
+    ThreeWaySuggestionResp(
+      id: json['id'] as String?,
+      counter: json['counter'] as num?,
+      module: json['module'] as String?,
+      user: json['user'] == null
+          ? null
+          : UserPrincipalResp.fromJson(json['user'] as Map<String, dynamic>),
+      post1: json['post1'] == null
+          ? null
+          : PostPrincipalResp.fromJson(json['post1'] as Map<String, dynamic>),
+      post2: json['post2'] == null
+          ? null
+          : PostPrincipalResp.fromJson(json['post2'] as Map<String, dynamic>),
+      post3: json['post3'] == null
+          ? null
+          : PostPrincipalResp.fromJson(json['post3'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$ThreeWaySuggestionRespToJson(
+        ThreeWaySuggestionResp instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'counter': instance.counter,
+      'module': instance.module,
+      'user': instance.user?.toJson(),
+      'post1': instance.post1?.toJson(),
+      'post2': instance.post2?.toJson(),
+      'post3': instance.post3?.toJson(),
     };
 
 TradePrincipalRes _$TradePrincipalResFromJson(Map<String, dynamic> json) =>
@@ -304,6 +335,34 @@ Map<String, dynamic> _$TradePrincipalResToJson(TradePrincipalRes instance) =>
       'module': instance.module?.toJson(),
       'lookingFor': instance.lookingFor?.map((e) => e.toJson()).toList(),
       'status': instance.status,
+    };
+
+TwoWaySuggestionResp _$TwoWaySuggestionRespFromJson(
+        Map<String, dynamic> json) =>
+    TwoWaySuggestionResp(
+      id: json['id'] as String?,
+      counter: json['counter'] as num?,
+      module: json['module'] as String?,
+      user: json['user'] == null
+          ? null
+          : UserPrincipalResp.fromJson(json['user'] as Map<String, dynamic>),
+      post1: json['post1'] == null
+          ? null
+          : PostPrincipalResp.fromJson(json['post1'] as Map<String, dynamic>),
+      post2: json['post2'] == null
+          ? null
+          : PostPrincipalResp.fromJson(json['post2'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$TwoWaySuggestionRespToJson(
+        TwoWaySuggestionResp instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'counter': instance.counter,
+      'module': instance.module,
+      'user': instance.user?.toJson(),
+      'post1': instance.post1?.toJson(),
+      'post2': instance.post2?.toJson(),
     };
 
 UpdateUserReq _$UpdateUserReqFromJson(Map<String, dynamic> json) =>

@@ -184,6 +184,61 @@ class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<List<TwoWaySuggestionResp>>> _suggestionAdminTwoUserIdGet(
+      {required String? userId, String? connectorId, int? take}) {
+    final $url = '/Suggestion/admin/two/${userId}';
+    final $params = <String, dynamic>{'connectorId': connectorId, 'take': take};
+    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    return client
+        .send<List<TwoWaySuggestionResp>, TwoWaySuggestionResp>($request);
+  }
+
+  @override
+  Future<Response<List<ThreeWaySuggestionResp>>> _suggestionAdminThreeUserIdGet(
+      {required String? userId, String? connectorId, int? take}) {
+    final $url = '/Suggestion/admin/three/${userId}';
+    final $params = <String, dynamic>{'connectorId': connectorId, 'take': take};
+    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    return client
+        .send<List<ThreeWaySuggestionResp>, ThreeWaySuggestionResp>($request);
+  }
+
+  @override
+  Future<Response<List<TwoWaySuggestionResp>>> _suggestionTwoGet(
+      {String? connectorId, int? take}) {
+    final $url = '/Suggestion/two';
+    final $params = <String, dynamic>{'connectorId': connectorId, 'take': take};
+    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    return client
+        .send<List<TwoWaySuggestionResp>, TwoWaySuggestionResp>($request);
+  }
+
+  @override
+  Future<Response<List<ThreeWaySuggestionResp>>> _suggestionThreeGet(
+      {String? connectorId, int? take}) {
+    final $url = '/Suggestion/three';
+    final $params = <String, dynamic>{'connectorId': connectorId, 'take': take};
+    final $request = Request('GET', $url, client.baseUrl, parameters: $params);
+    return client
+        .send<List<ThreeWaySuggestionResp>, ThreeWaySuggestionResp>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _suggestionAddSourceGet({required String? source}) {
+    final $url = '/Suggestion/add/${source}';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _suggestionSearchSourceGet(
+      {required String? source}) {
+    final $url = '/Suggestion/search/${source}';
+    final $request = Request('GET', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<List<UserPrincipalResp>>> _userGet() {
     final $url = '/User';
     final $request = Request('GET', $url, client.baseUrl);

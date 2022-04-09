@@ -16,7 +16,6 @@ class AppLoadType {
 }
 
 class ApplicationLoader extends StatefulWidget {
-  final VoidCallback logout;
   final ApiService api;
   final AuthMetaUser user;
   final TextEditingController controller;
@@ -24,7 +23,6 @@ class ApplicationLoader extends StatefulWidget {
 
   const ApplicationLoader(
       {Key? key,
-      required this.logout,
       required this.api,
       required this.user,
       required this.controller,
@@ -129,7 +127,6 @@ class _ApplicationLoaderState extends State<ApplicationLoader> {
       return lAnim;
     } else if (result!.isSuccess) {
       return ApplicationPage(
-        logout: widget.logout,
         appList: result!.value,
         controller: widget.controller,
         user: widget.user,
