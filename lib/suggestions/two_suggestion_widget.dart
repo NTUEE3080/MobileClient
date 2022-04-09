@@ -1,4 +1,5 @@
 import 'package:coursecupid/auth/lib/user.dart';
+import 'package:coursecupid/suggestions/trade_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../api_lib/swagger.swagger.dart';
@@ -10,13 +11,15 @@ class TwoWaySuggestionWidget extends StatefulWidget {
   final ApiService api;
   final AuthMetaUser user;
   final Future<void> Function() refresh;
+  final List<ApplicationRes> appList;
 
   const TwoWaySuggestionWidget(
       {Key? key,
       required this.api,
       required this.user,
       required this.refresh,
-      required this.suggestion})
+      required this.suggestion,
+      required this.appList})
       : super(key: key); // sets the state on construction
 
   String get courseCode => suggestion.module ?? "Unknown module";
@@ -38,6 +41,11 @@ class TwoWaySuggestionWidget extends StatefulWidget {
     var cs = t.colorScheme;
     var overline = t.textTheme.overline;
 
+    var tradable = appList
+        .where((e) =>
+            e.applied?.id == index1.id && e.post?.id == index2.id ||
+            e.applied?.id == index2.id && e.post?.id == index1.id)
+        .isEmpty;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       child: Card(
@@ -110,6 +118,36 @@ class TwoWaySuggestionWidget extends StatefulWidget {
                 title: "Index Information",
                 indexes: [index1.index!, index2.index!],
               ),
+              const Divider(
+                height: 12,
+                thickness: 1,
+                indent: 0,
+                endIndent: 0,
+              ),
+              ButtonBar(
+                children: [
+                  ElevatedButton.icon(
+                      onPressed: tradable
+                          ? () {
+                              Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (ctx) => TradeScreen(
+                                                user: user,
+                                                api: api,
+                                                post1: suggestion.post1!,
+                                                post2: suggestion.post2!,
+                                              )))
+                                  .then((value) async => await refresh());
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                          textStyle: t.textTheme.bodyMedium,
+                          minimumSize: const Size(100, 48)),
+                      icon: const Icon(Icons.swap_calls),
+                      label: const Text("Trade")),
+                ],
+              )
             ],
           ),
         ),

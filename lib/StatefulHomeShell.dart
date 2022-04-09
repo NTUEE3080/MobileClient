@@ -1,4 +1,5 @@
 import 'package:coursecupid/auth/lib/user.dart';
+import 'package:coursecupid/core/animation.dart';
 import 'package:coursecupid/module/modules_page.dart';
 import 'package:coursecupid/my_application/application_loader.dart';
 import 'package:coursecupid/post_creation/create_module_post.dart';
@@ -17,6 +18,7 @@ class BottomTabs {
   static const String module = "Modules";
   static const String applications = "Applications";
   static const String settings = "Settings";
+  static const String chat = "Chat";
 }
 
 class TopTabs {
@@ -161,6 +163,11 @@ class _ModuleState extends State<StatefulHomeShell> {
         page = ThemeSetting(
           controller: _controller,
         );
+        break;
+      case BottomTabs.chat:
+        page = const AnimationFrame(
+            asset: LottieAnimations.puzzle,
+            text: "Sorry, this page is still in-progress");
     }
     var tabBar = btmTab == BottomTabs.applications
         ? const TabBar(isScrollable: true, tabs: [
@@ -241,9 +248,9 @@ class _ModuleState extends State<StatefulHomeShell> {
                   text: 'Settings',
                 ),
                 BottomBarButton(
-                  icon: Icons.list,
-                  onPressed: () => _switchBottomTabs(BottomTabs.applications),
-                  text: 'Applications',
+                  icon: Icons.chat,
+                  onPressed: () => _switchBottomTabs(BottomTabs.chat),
+                  text: 'Chat',
                 ),
               ],
             ),

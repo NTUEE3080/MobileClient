@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:coursecupid/api_lib/swagger.swagger.dart';
 import 'package:coursecupid/auth/lib/user.dart';
 import 'package:coursecupid/core/err_animation.dart';
+import 'package:coursecupid/core/resp_ext.dart';
 import 'package:coursecupid/http_error.dart';
 import 'package:coursecupid/suggestions/suggestion_client.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +11,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../core/animation.dart';
 import '../core/api_service.dart';
+import '../core/result_ext.dart';
 import 'filterer.dart';
 
 class SuggestionPage<T> extends StatefulWidget {
@@ -36,6 +41,7 @@ class _SuggestionState<T> extends State<SuggestionPage<T>> {
   // constants
   List<T> fullList = [];
   List<T> filteredList = [];
+  List<ApplicationRes> appList = [];
   String? latest;
   String _searchTerm = "";
 
@@ -47,17 +53,19 @@ class _SuggestionState<T> extends State<SuggestionPage<T>> {
         errorMessage = message;
       });
 
-  _load() async {
-    var r = await widget.client.get(latest, 20);
-    if (r.isSuccess) {
-      var v = r.value;
-      latest = v.connector;
-      fullList = v.suggestions;
-      filteredList = fullList;
-      setError(null);
-    } else {
-      setError(r.error);
-    }
+  Future<Result<List<ApplicationRes>, HttpResponseError>> getAppList() async {
+    var posts = widget.api.access.applicationGet(
+      posterId: widget.user.data?.guid ?? "non-id",
+    );
+
+    var applies = widget.api.access.applicationGet(
+      applierId: widget.user.data?.guid ?? "non-id",
+    );
+
+    var result = await Future.wait([posts, applies]);
+
+    var r = result.map((x) => x.toResult()).toList();
+    return r[0].then((v1) => r[1].mapValue((v2) => [...v1, ...v2]));
   }
 
   Future<void> _refresh() async {
@@ -67,10 +75,18 @@ class _SuggestionState<T> extends State<SuggestionPage<T>> {
       latest = v.connector;
       fullList = v.suggestions;
       filteredList = fullList;
-      setError(null);
     } else {
       setError(r.error);
+      return;
     }
+    var alR = await getAppList();
+    if (alR.isSuccess) {
+      appList = alR.value;
+    } else {
+      setError(alR.error);
+      return;
+    }
+    setError(null);
   }
 
   _searchListener() {
@@ -101,8 +117,9 @@ class _SuggestionState<T> extends State<SuggestionPage<T>> {
 
   @override
   Widget build(BuildContext context) {
-    var children =
-        filteredList.map((a) => widget.client.gen(_refresh, a)).toList();
+    var children = filteredList
+        .map((a) => widget.client.gen(_refresh, appList, a))
+        .toList();
     var empty = const AnimationFrame(
         asset: LottieAnimations.emptybox, text: "No suggestions!");
     var content = filteredList.isEmpty

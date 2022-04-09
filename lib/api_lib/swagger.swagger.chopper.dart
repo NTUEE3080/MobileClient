@@ -38,6 +38,20 @@ class _$Swagger extends Swagger {
   }
 
   @override
+  Future<Response<dynamic>> _deviceTokenPost({required String? token}) {
+    final $url = '/Device/${token}';
+    final $request = Request('POST', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _deviceTokenDelete({required String? token}) {
+    final $url = '/Device/${token}';
+    final $request = Request('DELETE', $url, client.baseUrl);
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<List<IndexRes>>> _indexGet(
       {String? semester, String? course, String? day, String? venue}) {
     final $url = '/Index';
