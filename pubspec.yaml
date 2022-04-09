@@ -57,6 +57,8 @@ flutter_icons:
 flutter:
   assets:
     - env/
+    - assets/theme/dark_pastel.json
+    - assets/theme/dark_cupid.json
     - assets/theme/stary_night.json
     - assets/theme/dark_forest.json
     - assets/theme_main.json
