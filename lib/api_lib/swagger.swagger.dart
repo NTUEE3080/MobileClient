@@ -10,7 +10,6 @@ import 'package:json_annotation/json_annotation.dart';
 import 'client_mapping.dart';
 
 part 'swagger.swagger.chopper.dart';
-
 part 'swagger.swagger.g.dart';
 
 // **************************************************************************
@@ -323,6 +322,117 @@ abstract class Swagger extends ChopperService {
   Future<chopper.Response<String>> _currentGet();
 
   ///
+  ///@param userId
+  ///@param connectorId
+  ///@param take
+  Future<chopper.Response<List<TwoWaySuggestionResp>>>
+      suggestionAdminTwoUserIdGet(
+          {required String? userId, String? connectorId, int? take}) {
+    generatedMapping.putIfAbsent(
+        TwoWaySuggestionResp, () => TwoWaySuggestionResp.fromJsonFactory);
+
+    return _suggestionAdminTwoUserIdGet(
+        userId: userId, connectorId: connectorId, take: take);
+  }
+
+  ///
+  ///@param userId
+  ///@param connectorId
+  ///@param take
+  @Get(path: '/Suggestion/admin/two/{userId}')
+  Future<chopper.Response<List<TwoWaySuggestionResp>>>
+      _suggestionAdminTwoUserIdGet(
+          {@Path('userId') required String? userId,
+          @Query('connectorId') String? connectorId,
+          @Query('take') int? take});
+
+  ///
+  ///@param userId
+  ///@param connectorId
+  ///@param take
+  Future<chopper.Response<List<ThreeWaySuggestionResp>>>
+      suggestionAdminThreeUserIdGet(
+          {required String? userId, String? connectorId, int? take}) {
+    generatedMapping.putIfAbsent(
+        ThreeWaySuggestionResp, () => ThreeWaySuggestionResp.fromJsonFactory);
+
+    return _suggestionAdminThreeUserIdGet(
+        userId: userId, connectorId: connectorId, take: take);
+  }
+
+  ///
+  ///@param userId
+  ///@param connectorId
+  ///@param take
+  @Get(path: '/Suggestion/admin/three/{userId}')
+  Future<chopper.Response<List<ThreeWaySuggestionResp>>>
+      _suggestionAdminThreeUserIdGet(
+          {@Path('userId') required String? userId,
+          @Query('connectorId') String? connectorId,
+          @Query('take') int? take});
+
+  ///
+  ///@param connectorId
+  ///@param take
+  Future<chopper.Response<List<TwoWaySuggestionResp>>> suggestionTwoGet(
+      {String? connectorId, int? take}) {
+    generatedMapping.putIfAbsent(
+        TwoWaySuggestionResp, () => TwoWaySuggestionResp.fromJsonFactory);
+
+    return _suggestionTwoGet(connectorId: connectorId, take: take);
+  }
+
+  ///
+  ///@param connectorId
+  ///@param take
+  @Get(path: '/Suggestion/two')
+  Future<chopper.Response<List<TwoWaySuggestionResp>>> _suggestionTwoGet(
+      {@Query('connectorId') String? connectorId, @Query('take') int? take});
+
+  ///
+  ///@param connectorId
+  ///@param take
+  Future<chopper.Response<List<ThreeWaySuggestionResp>>> suggestionThreeGet(
+      {String? connectorId, int? take}) {
+    generatedMapping.putIfAbsent(
+        ThreeWaySuggestionResp, () => ThreeWaySuggestionResp.fromJsonFactory);
+
+    return _suggestionThreeGet(connectorId: connectorId, take: take);
+  }
+
+  ///
+  ///@param connectorId
+  ///@param take
+  @Get(path: '/Suggestion/three')
+  Future<chopper.Response<List<ThreeWaySuggestionResp>>> _suggestionThreeGet(
+      {@Query('connectorId') String? connectorId, @Query('take') int? take});
+
+  ///
+  ///@param source
+  Future<chopper.Response> suggestionAddSourceGet({required String? source}) {
+    return _suggestionAddSourceGet(source: source);
+  }
+
+  ///
+  ///@param source
+  @Get(path: '/Suggestion/add/{source}')
+  Future<chopper.Response> _suggestionAddSourceGet(
+      {@Path('source') required String? source});
+
+  ///
+  ///@param source
+  Future<chopper.Response> suggestionSearchSourceGet(
+      {required String? source}) {
+    return _suggestionSearchSourceGet(source: source);
+  }
+
+  ///
+  ///@param source
+  @Get(path: '/Suggestion/search/{source}')
+  Future<chopper.Response> _suggestionSearchSourceGet(
+      {@Path('source') required String? source});
+
+  ///
   Future<chopper.Response<List<UserPrincipalResp>>> userGet() {
     generatedMapping.putIfAbsent(
         UserPrincipalResp, () => UserPrincipalResp.fromJsonFactory);
@@ -425,7 +535,6 @@ class ApplicationRes {
   final String? status;
   static const fromJsonFactory = _$ApplicationResFromJson;
   static const toJsonFactory = _$ApplicationResToJson;
-
   Map<String, dynamic> toJson() => _$ApplicationResToJson(this);
 
   @override
@@ -1158,7 +1267,6 @@ class PostPrincipalResp {
   final bool? completed;
   static const fromJsonFactory = _$PostPrincipalRespFromJson;
   static const toJsonFactory = _$PostPrincipalRespToJson;
-
   Map<String, dynamic> toJson() => _$PostPrincipalRespToJson(this);
 
   @override
@@ -1232,7 +1340,6 @@ class PostResp {
   final List<TradePrincipalRes>? applications;
   static const fromJsonFactory = _$PostRespFromJson;
   static const toJsonFactory = _$PostRespToJson;
-
   Map<String, dynamic> toJson() => _$PostRespToJson(this);
 
   @override
@@ -1318,6 +1425,96 @@ extension $SemesterResExtension on SemesterRes {
 }
 
 @JsonSerializable(explicitToJson: true)
+class ThreeWaySuggestionResp {
+  ThreeWaySuggestionResp({
+    this.id,
+    this.counter,
+    this.module,
+    this.user,
+    this.post1,
+    this.post2,
+    this.post3,
+  });
+
+  factory ThreeWaySuggestionResp.fromJson(Map<String, dynamic> json) =>
+      _$ThreeWaySuggestionRespFromJson(json);
+
+  @JsonKey(name: 'id')
+  final String? id;
+  @JsonKey(name: 'counter')
+  final num? counter;
+  @JsonKey(name: 'module')
+  final String? module;
+  @JsonKey(name: 'user')
+  final UserPrincipalResp? user;
+  @JsonKey(name: 'post1')
+  final PostPrincipalResp? post1;
+  @JsonKey(name: 'post2')
+  final PostPrincipalResp? post2;
+  @JsonKey(name: 'post3')
+  final PostPrincipalResp? post3;
+  static const fromJsonFactory = _$ThreeWaySuggestionRespFromJson;
+  static const toJsonFactory = _$ThreeWaySuggestionRespToJson;
+
+  Map<String, dynamic> toJson() => _$ThreeWaySuggestionRespToJson(this);
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is ThreeWaySuggestionResp &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.counter, counter) ||
+                const DeepCollectionEquality()
+                    .equals(other.counter, counter)) &&
+            (identical(other.module, module) ||
+                const DeepCollectionEquality().equals(other.module, module)) &&
+            (identical(other.user, user) ||
+                const DeepCollectionEquality().equals(other.user, user)) &&
+            (identical(other.post1, post1) ||
+                const DeepCollectionEquality().equals(other.post1, post1)) &&
+            (identical(other.post2, post2) ||
+                const DeepCollectionEquality().equals(other.post2, post2)) &&
+            (identical(other.post3, post3) ||
+                const DeepCollectionEquality().equals(other.post3, post3)));
+  }
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(counter) ^
+      const DeepCollectionEquality().hash(module) ^
+      const DeepCollectionEquality().hash(user) ^
+      const DeepCollectionEquality().hash(post1) ^
+      const DeepCollectionEquality().hash(post2) ^
+      const DeepCollectionEquality().hash(post3) ^
+      runtimeType.hashCode;
+}
+
+extension $ThreeWaySuggestionRespExtension on ThreeWaySuggestionResp {
+  ThreeWaySuggestionResp copyWith(
+      {String? id,
+      num? counter,
+      String? module,
+      UserPrincipalResp? user,
+      PostPrincipalResp? post1,
+      PostPrincipalResp? post2,
+      PostPrincipalResp? post3}) {
+    return ThreeWaySuggestionResp(
+        id: id ?? this.id,
+        counter: counter ?? this.counter,
+        module: module ?? this.module,
+        user: user ?? this.user,
+        post1: post1 ?? this.post1,
+        post2: post2 ?? this.post2,
+        post3: post3 ?? this.post3);
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class TradePrincipalRes {
   TradePrincipalRes({
     this.id,
@@ -1345,7 +1542,6 @@ class TradePrincipalRes {
   final String? status;
   static const fromJsonFactory = _$TradePrincipalResFromJson;
   static const toJsonFactory = _$TradePrincipalResToJson;
-
   Map<String, dynamic> toJson() => _$TradePrincipalResToJson(this);
 
   @override
@@ -1396,6 +1592,88 @@ extension $TradePrincipalResExtension on TradePrincipalRes {
         module: module ?? this.module,
         lookingFor: lookingFor ?? this.lookingFor,
         status: status ?? this.status);
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class TwoWaySuggestionResp {
+  TwoWaySuggestionResp({
+    this.id,
+    this.counter,
+    this.module,
+    this.user,
+    this.post1,
+    this.post2,
+  });
+
+  factory TwoWaySuggestionResp.fromJson(Map<String, dynamic> json) =>
+      _$TwoWaySuggestionRespFromJson(json);
+
+  @JsonKey(name: 'id')
+  final String? id;
+  @JsonKey(name: 'counter')
+  final num? counter;
+  @JsonKey(name: 'module')
+  final String? module;
+  @JsonKey(name: 'user')
+  final UserPrincipalResp? user;
+  @JsonKey(name: 'post1')
+  final PostPrincipalResp? post1;
+  @JsonKey(name: 'post2')
+  final PostPrincipalResp? post2;
+  static const fromJsonFactory = _$TwoWaySuggestionRespFromJson;
+  static const toJsonFactory = _$TwoWaySuggestionRespToJson;
+
+  Map<String, dynamic> toJson() => _$TwoWaySuggestionRespToJson(this);
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  bool operator ==(dynamic other) {
+    return identical(this, other) ||
+        (other is TwoWaySuggestionResp &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.counter, counter) ||
+                const DeepCollectionEquality()
+                    .equals(other.counter, counter)) &&
+            (identical(other.module, module) ||
+                const DeepCollectionEquality().equals(other.module, module)) &&
+            (identical(other.user, user) ||
+                const DeepCollectionEquality().equals(other.user, user)) &&
+            (identical(other.post1, post1) ||
+                const DeepCollectionEquality().equals(other.post1, post1)) &&
+            (identical(other.post2, post2) ||
+                const DeepCollectionEquality().equals(other.post2, post2)));
+  }
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(counter) ^
+      const DeepCollectionEquality().hash(module) ^
+      const DeepCollectionEquality().hash(user) ^
+      const DeepCollectionEquality().hash(post1) ^
+      const DeepCollectionEquality().hash(post2) ^
+      runtimeType.hashCode;
+}
+
+extension $TwoWaySuggestionRespExtension on TwoWaySuggestionResp {
+  TwoWaySuggestionResp copyWith(
+      {String? id,
+      num? counter,
+      String? module,
+      UserPrincipalResp? user,
+      PostPrincipalResp? post1,
+      PostPrincipalResp? post2}) {
+    return TwoWaySuggestionResp(
+        id: id ?? this.id,
+        counter: counter ?? this.counter,
+        module: module ?? this.module,
+        user: user ?? this.user,
+        post1: post1 ?? this.post1,
+        post2: post2 ?? this.post2);
   }
 }
 
