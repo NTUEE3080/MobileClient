@@ -25,7 +25,8 @@ abstract class SuggestionClient<T> {
   Future<Result<SuggestionResult<T>, HttpResponseError>> get(
       String? connectorId, int? take);
 
-  Widget gen(Future<void> Function() refresh, T input);
+  Widget gen(
+      Future<void> Function() refresh, List<ApplicationRes> appList, T input);
 }
 
 class ThreeWaySuggestionClient
@@ -45,7 +46,8 @@ class ThreeWaySuggestionClient
   }
 
   @override
-  Widget gen(Future<void> Function() refresh, ThreeWaySuggestionResp input) {
+  Widget gen(Future<void> Function() refresh, List<ApplicationRes> appList,
+      ThreeWaySuggestionResp input) {
     return ThreeWaySuggestionWidget(
       api: api,
       refresh: refresh,
@@ -70,8 +72,10 @@ class TwoWaySuggestionClient extends SuggestionClient<TwoWaySuggestionResp> {
   }
 
   @override
-  Widget gen(Future<void> Function() refresh, TwoWaySuggestionResp input) {
+  Widget gen(Future<void> Function() refresh, List<ApplicationRes> appList,
+      TwoWaySuggestionResp input) {
     return TwoWaySuggestionWidget(
+      appList: appList,
       api: api,
       refresh: refresh,
       user: user,

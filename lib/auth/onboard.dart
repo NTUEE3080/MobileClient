@@ -77,9 +77,16 @@ class _OnboardPageState extends State<OnboardPage> {
                     const InputDecoration(filled: true, labelText: 'Name'),
                 formControlName: 'name',
               ),
+              const SizedBox(height: 40),
               ReactiveFormConsumer(
                 builder: (context, form, child) {
                   return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: BeveledRectangleBorder(
+                          borderRadius: BorderRadius.circular(9.0)),
+                      minimumSize: const Size(200, 56),
+                      elevation: 0,
+                    ),
                     child: const Text('Next'),
                     onPressed: form.valid ? _onSubmit : null,
                   );
