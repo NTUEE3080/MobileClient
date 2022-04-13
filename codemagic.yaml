@@ -132,11 +132,15 @@ workflows:
         keyAlias=$FCI_KEY_ALIAS
         storeFile=/tmp/keystore.keystore
         EOF
+      # change logo
+      - rm "$FCI_BUILD_DIR/assets/icon/logo.png"
+      - mv "$FCI_BUILD_DIR/assets/icon/logo_dev.png" "$FCI_BUILD_DIR/assets/icon/logo.png"
       - |
         # set up local properties
         echo "flutter.sdk=$HOME/programs/flutter" > "$FCI_BUILD_DIR/android/local.properties"
       - flutter packages pub get
       - flutter config --enable-web
+      - flutter pub run flutter_launcher_icons:main
       - flutter build appbundle --release --dart-define=APP_ENV=dev "--dart-define=CC_APP_NAME=CourseCupid - DEV" --dart-define=CC_APP_SUFFIX=.dev
       - find . -name "Podfile" -execdir pod install \;
       - keychain initialize
